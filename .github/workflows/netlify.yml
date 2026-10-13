@@ -1,0 +1,27 @@
+name: Deploy a Netlify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Verificar secrets
+        run: |
+          [ -n "$NETLIFY_AUTH_TOKEN" ] || { echo "Falta NETLIFY_AUTH_TOKEN"; exit 1; }
+          [ -n "$NETLIFY_SITE_ID" ] || { echo "Falta NETLIFY_SITE_ID"; exit 1; }
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      - run: npx netlify-cli deploy --build --prod --site "$NETLIFY_SITE_ID"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
