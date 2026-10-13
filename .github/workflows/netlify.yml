@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: npm
+          cache: yarn
       - name: Verificar secrets
         run: |
           [ -n "$NETLIFY_AUTH_TOKEN" ] || { echo "Falta NETLIFY_AUTH_TOKEN"; exit 1; }
