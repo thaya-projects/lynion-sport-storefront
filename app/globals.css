@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #111114;
+
+  --color-lynion-500: #10a5f5;
+  --color-lynion-600: #4b7bf5;
+  --color-lynion-700: #7b2cbf;
+
+  --color-primary: #10a5f5;
+  --color-primary-hi: #3ab6f7;
+  --color-primary-dark: #0890e0;
+
+  --color-accent: #7b2cbf;
+  --color-accent-hi: #9948d9;
+
+  --color-whatsapp: #22c55e;
+  --color-whatsapp-hi: #16a34a;
+
+  --font-script: var(--font-caveat), 'Brush Script MT', cursive;
+
+  --gradient-lynion: linear-gradient(135deg, #10a5f5 0%, #4b7bf5 50%, #7b2cbf 100%);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-ink);
+    color: #f5f5f7;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-lynion-600);
+    color: #fff;
+  }
+}
+
+@utility gradient-lynion {
+  background: var(--gradient-lynion);
+}
+
+@utility gradient-text {
+  background: var(--gradient-lynion);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@layer components {
+  .marquee {
+    animation: marquee 32s linear infinite;
+    width: max-content;
+  }
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+}
