@@ -8,12 +8,10 @@ import { CatalogFilters } from '@/components/catalog/catalog-filters';
 import { SortSelect } from '@/components/catalog/sort-select';
 import { CatalogSearch } from '@/components/catalog/catalog-search';
 import { filterProducts, type Product } from '@/lib/mocks/products';
+import { BASE_OPEN_GRAPH, DEFAULT_OG_IMAGE, SITE_NAME } from '@/lib/site';
 
-export const metadata: Metadata = {
-  title: 'Catálogo',
-  description:
-    'Pelotas, indumentaria y accesorios deportivos de las mejores marcas. Molten, Spalding, Mikasa, Adidas, Nike y Wilson. Envíos a todo Bolivia.',
-};
+const CATALOG_DESCRIPTION =
+  'Pelotas, indumentaria y accesorios deportivos de las mejores marcas. Molten, Spalding, Mikasa, Adidas, Nike y Wilson. Envíos a todo Bolivia.';
 
 type SearchParams = Promise<{
   category?: Product['category'];
@@ -22,6 +20,31 @@ type SearchParams = Promise<{
   sort?: 'featured' | 'price-asc' | 'price-desc' | 'newest';
   q?: string;
 }>;
+
+// Las combinaciones de filtros no se indexan (noindex, follow) para no
+// generar cientos de URLs casi duplicadas; solo el listado base es canónico.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const hasFilters = Object.values(sp).some((v) => v !== undefined && v !== '');
+  return {
+    title: 'Catálogo',
+    description: CATALOG_DESCRIPTION,
+    openGraph: {
+      ...BASE_OPEN_GRAPH,
+      title: `Catálogo · ${SITE_NAME}`,
+      description: CATALOG_DESCRIPTION,
+      url: '/productos',
+      images: [DEFAULT_OG_IMAGE],
+    },
+    ...(hasFilters
+      ? { robots: { index: false, follow: true } }
+      : { alternates: { canonical: '/productos' } }),
+  };
+}
 
 export default async function CatalogPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;

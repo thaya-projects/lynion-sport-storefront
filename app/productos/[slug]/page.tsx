@@ -9,7 +9,11 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { ProductCard } from '@/components/product-card';
 import { AddToCartButton } from '@/components/catalog/add-to-cart-button';
 import { WhatsAppCTA } from '@/components/whatsapp-cta';
-import { getProductBySlug, getRelatedProducts, products } from '@/lib/mocks/products';
+import { getRelatedProducts, products, type Product } from '@/lib/mocks/products';
+import { getProduct } from '@/lib/catalog';
+import { JsonLd } from '@/components/seo/json-ld';
+import { truncateDescription } from '@/lib/seo';
+import { BASE_OPEN_GRAPH, DEFAULT_OG_IMAGE, PRODUCT_SEO_ENABLED, SITE_NAME, SITE_URL } from '@/lib/site';
 import { CATEGORIES } from '@/lib/categories';
 import { formatPrice } from '@/lib/format';
 import { buildProductInquiryUrl } from '@/lib/whatsapp';
@@ -22,17 +26,57 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
-  if (!product) return { title: 'Producto no encontrado' };
+  const product = await getProduct(slug);
+  if (!product) notFound();
+
+  const description = truncateDescription(product.description);
+  const url = `/productos/${product.slug}`;
   return {
     title: product.name,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      ...BASE_OPEN_GRAPH,
+      title: `${product.name} · ${SITE_NAME}`,
+      description,
+      url,
+      images: PRODUCT_SEO_ENABLED
+        ? [{ url: product.imageSrc, alt: product.name }]
+        : [DEFAULT_OG_IMAGE],
+    },
+  };
+}
+
+function buildProductJsonLd(product: Product) {
+  const url = `${SITE_URL}/productos/${product.slug}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    '@id': `${url}#product`,
+    name: product.name,
     description: product.description,
+    sku: product.id,
+    url,
+    image: new URL(product.imageSrc, SITE_URL).toString(),
+    brand: { '@type': 'Brand', name: product.brand },
+    // Solo con precio real. availability no usa el stock interno: si está
+    // publicado, está a la venta.
+    ...(product.price > 0 && {
+      offers: {
+        '@type': 'Offer',
+        url,
+        price: product.price.toFixed(2),
+        priceCurrency: 'BOB',
+        availability: 'https://schema.org/InStock',
+        seller: { '@id': `${SITE_URL}/#organization` },
+      },
+    }),
   };
 }
 
 export default async function ProductDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProduct(slug);
   if (!product) notFound();
 
   const category = CATEGORIES.find((c) => c.slug === product.category);
@@ -48,6 +92,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
 
   return (
     <>
+      {PRODUCT_SEO_ENABLED && <JsonLd data={buildProductJsonLd(product)} />}
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-4 pb-24 pt-6 md:px-8">
         <Breadcrumbs
