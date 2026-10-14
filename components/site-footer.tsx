@@ -5,6 +5,7 @@ import { LynionLogo } from '@/components/lynion-logo';
 import { WhatsAppCTA } from '@/components/whatsapp-cta';
 import { CATEGORIES } from '@/lib/categories';
 import { buildGeneralInquiryUrl } from '@/lib/whatsapp';
+import { SOCIAL_PROFILES } from '@/lib/site';
 
 const atencion = [
   { href: '/faq', label: 'Preguntas frecuentes' },
@@ -14,10 +15,10 @@ const atencion = [
 ];
 
 const socials = [
-  { href: 'https://instagram.com/lynionsport', label: 'Instagram', Icon: Instagram, hoverBg: 'hover:bg-[#E4405F]' },
-  { href: 'https://facebook.com/lynionsport', label: 'Facebook', Icon: Facebook, hoverBg: 'hover:bg-[#1877F2]' },
-  { href: 'https://tiktok.com/@lynionsport', label: 'TikTok', Icon: Music2, hoverBg: 'hover:bg-black' },
-  { href: 'https://youtube.com/@lynionsport', label: 'YouTube', Icon: Youtube, hoverBg: 'hover:bg-[#FF0000]' },
+  { href: SOCIAL_PROFILES.instagram, label: 'Instagram', Icon: Instagram, hoverBg: 'hover:bg-[#E4405F]' },
+  { href: SOCIAL_PROFILES.facebook, label: 'Facebook', Icon: Facebook, hoverBg: 'hover:bg-[#1877F2]' },
+  { href: SOCIAL_PROFILES.tiktok, label: 'TikTok', Icon: Music2, hoverBg: 'hover:bg-black' },
+  { href: SOCIAL_PROFILES.youtube, label: 'YouTube', Icon: Youtube, hoverBg: 'hover:bg-[#FF0000]' },
 ];
 
 const categoryLinks = [

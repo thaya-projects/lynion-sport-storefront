@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Inter, Space_Grotesk, Caveat } from 'next/font/google';
 import { CartProvider } from '@/components/cart-provider';
+import { JsonLd } from '@/components/seo/json-ld';
+import { BASE_OPEN_GRAPH, SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_PROFILES } from '@/lib/site';
 import './globals.css';
 
 const inter = Inter({
@@ -24,23 +26,53 @@ const caveat = Caveat({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lynionsport.bo';
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Lynion Sport Bolivia — Pelotas y equipamiento deportivo',
     template: '%s · Lynion Sport',
   },
-  description:
-    'Tienda oficial Lynion Sport en Bolivia. Pelotas de fútbol, futsal, vóley y básquet de marcas oficiales: Molten, Spalding, Mikasa, Adidas, Nike y Wilson. Envíos desde Potosí a todo el país.',
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  robots: { index: true, follow: true },
   openGraph: {
-    type: 'website',
-    siteName: 'Lynion Sport',
-    url: siteUrl,
+    ...BASE_OPEN_GRAPH,
+    url: '/',
   },
   twitter: { card: 'summary_large_image' },
 };
+
+const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
+const siteJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    name: SITE_NAME,
+    url: SITE_URL,
+    inLanguage: 'es-BO',
+    publisher: { '@id': `${SITE_URL}/#organization` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo/lynion-sport.png`,
+    sameAs: Object.values(SOCIAL_PROFILES),
+    ...(whatsappNumber && {
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: whatsappNumber,
+        contactType: 'customer service',
+        areaServed: 'BO',
+        availableLanguage: 'es',
+      },
+    }),
+  },
+];
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -49,6 +81,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${inter.variable} ${spaceGrotesk.variable} ${caveat.variable}`}
     >
       <body>
+        <JsonLd data={siteJsonLd} />
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

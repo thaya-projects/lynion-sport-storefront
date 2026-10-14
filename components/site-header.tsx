@@ -30,7 +30,7 @@ export function SiteHeader() {
       <header className="sticky top-0 z-40 border-b border-white/5 bg-ink/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-4 md:px-8">
           <Link href="/" aria-label="Lynion Sport — inicio" className="shrink-0">
-            <LynionLogo />
+            <LynionLogo priority />
           </Link>
 
           <nav

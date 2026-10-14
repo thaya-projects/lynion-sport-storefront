@@ -27,21 +27,30 @@ export function BrandStrip() {
 
       <div className="relative py-7 md:py-8">
         <div className="marquee flex items-center gap-14 whitespace-nowrap px-6 md:gap-20">
-          {[...brands, ...brands].map((brand, idx) => (
-            <div
-              key={`${brand.name}-${idx}`}
-              className="flex shrink-0 items-center gap-14 md:gap-20"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={brand.file}
-                alt={brand.name}
-                style={{ height: brand.height }}
-                className="w-auto opacity-80 transition duration-300 hover:opacity-100"
-              />
-              <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent/70" />
-            </div>
-          ))}
+          {/* La segunda vuelta solo existe para el loop visual del marquee:
+              se oculta a lectores de pantalla y buscadores. */}
+          {[...brands, ...brands].map((brand, idx) => {
+            const isLoopCopy = idx >= brands.length;
+            return (
+              <div
+                key={`${brand.name}-${idx}`}
+                aria-hidden={isLoopCopy || undefined}
+                className="flex shrink-0 items-center gap-14 md:gap-20"
+              >
+                {/* SVG: next/image no lo optimiza, así que se usa <img> directo. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={brand.file}
+                  alt={isLoopCopy ? '' : `Logo ${brand.name}`}
+                  loading="lazy"
+                  decoding="async"
+                  style={{ height: brand.height }}
+                  className="w-auto opacity-80 transition duration-300 hover:opacity-100"
+                />
+                <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent/70" />
+              </div>
+            );
+          })}
         </div>
 
         <div

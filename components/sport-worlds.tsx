@@ -63,7 +63,7 @@ export function SportWorlds() {
                 >
                   <Image
                     src={meta.image}
-                    alt={cat.name}
+                    alt={`Pelota de ${cat.name.toLowerCase()}`}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-contain p-6 transition duration-500 group-hover:scale-110 group-hover:rotate-3 md:p-10"
