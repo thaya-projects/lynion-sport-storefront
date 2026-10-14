@@ -147,7 +147,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
             <h2 id="related-title" className="font-display text-2xl font-extrabold text-white md:text-3xl">
               También te puede interesar
             </h2>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}

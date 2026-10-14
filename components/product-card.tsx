@@ -40,7 +40,7 @@ export function ProductCard({ product }: { product: Product }) {
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-ink-soft"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/8 bg-ink-soft"
     >
       <div
         className="relative aspect-square overflow-hidden"
@@ -49,13 +49,13 @@ export function ProductCard({ product }: { product: Product }) {
         }}
       >
         {discount ? (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-primary px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-wider text-ink shadow-lg shadow-primary/30">
+          <span className="absolute left-2 top-2 z-10 rounded-full bg-primary px-2 py-0.5 text-[0.58rem] font-black uppercase tracking-wider text-ink shadow-lg shadow-primary/30 md:left-3 md:top-3 md:px-2.5 md:py-1 md:text-[0.62rem]">
             -{discount}%
           </span>
         ) : badge ? (
           <span
             className={cn(
-              'absolute left-3 top-3 z-10 rounded-full px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-wider',
+              'absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-[0.58rem] font-black uppercase tracking-wider md:left-3 md:top-3 md:px-2.5 md:py-1 md:text-[0.62rem]',
               badge.className,
             )}
           >
@@ -63,7 +63,7 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         ) : null}
 
-        <span className="absolute right-3 top-3 z-10 rounded-md bg-black/50 px-2 py-1 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/80 backdrop-blur">
+        <span className="absolute right-2 top-2 z-10 rounded-md bg-black/50 px-1.5 py-0.5 text-[0.55rem] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur md:right-3 md:top-3 md:px-2 md:py-1 md:text-[0.6rem] md:tracking-[0.2em]">
           {product.brand}
         </span>
 
@@ -71,25 +71,25 @@ export function ProductCard({ product }: { product: Product }) {
           src={product.imageSrc}
           alt={product.name}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-contain p-8 transition duration-500 group-hover:scale-110 group-hover:rotate-3"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-contain p-4 transition duration-500 group-hover:scale-110 group-hover:rotate-3 md:p-8"
         />
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-white/50">
+      <div className="flex flex-1 flex-col p-3 md:p-4">
+        <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-white/50 md:text-[0.62rem] md:tracking-[0.24em]">
           {product.brand}
         </p>
-        <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-white/95">
+        <h3 className="mt-1 line-clamp-2 min-h-[2.25rem] text-xs font-semibold text-white/95 md:min-h-[2.5rem] md:text-sm">
           {product.name}
         </h3>
 
-        <div className="mt-3 flex items-baseline gap-2">
-          <span className="text-lg font-bold text-white">
+        <div className="mt-2 flex items-baseline gap-2 md:mt-3">
+          <span className="text-base font-bold text-white md:text-lg">
             {formatPrice(product.price)}
           </span>
           {product.originalPrice && (
-            <span className="text-xs text-white/40 line-through">
+            <span className="text-[0.65rem] text-white/40 line-through md:text-xs">
               {formatPrice(product.originalPrice)}
             </span>
           )}
@@ -98,9 +98,9 @@ export function ProductCard({ product }: { product: Product }) {
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-xs font-black uppercase tracking-widest text-ink transition hover:bg-primary-hi active:scale-[0.98]"
+          className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-primary px-2 py-2 text-[0.65rem] font-black uppercase tracking-wider text-ink transition hover:bg-primary-hi active:scale-[0.98] md:mt-4 md:gap-2 md:px-3 md:py-2.5 md:text-xs md:tracking-widest"
         >
-          <ShoppingCart className="h-3.5 w-3.5" />
+          <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
           Agregar
         </button>
       </div>
