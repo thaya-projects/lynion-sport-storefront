@@ -2,13 +2,17 @@
 
 import { useState } from 'react';
 import { ShoppingCart, Minus, Plus, Check } from 'lucide-react';
-import type { Product } from '@/lib/mocks/products';
+import type { CatalogProduct } from '@/lib/catalog-types';
 import { useCart } from '@/lib/cart/store';
 
-export function AddToCartButton({ product }: { product: Product }) {
+export function AddToCartButton({ product }: { product: CatalogProduct }) {
   const add = useCart((s) => s.add);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+
+  // Sin precio no se puede armar el pedido: queda la consulta por WhatsApp.
+  if (product.price === null) return null;
+  const price = product.price;
 
   function handleAdd() {
     add(
@@ -17,7 +21,7 @@ export function AddToCartButton({ product }: { product: Product }) {
         slug: product.slug,
         name: product.name,
         brand: product.brand,
-        price: product.price,
+        price,
         imageHue: product.imageHue,
       },
       qty,

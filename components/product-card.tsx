@@ -3,29 +3,31 @@
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { ShoppingCart } from 'lucide-react';
-import type { Product } from '@/lib/mocks/products';
+import type { CatalogProduct } from '@/lib/catalog-types';
+import { NoPhoto } from '@/components/no-photo';
 import { formatPrice } from '@/lib/format';
 import { useCart } from '@/lib/cart/store';
 import { cn } from '@/lib/utils';
 
-const badgeStyles: Record<NonNullable<Product['badge']>, { label: string; className: string }> = {
+const badgeStyles: Record<NonNullable<CatalogProduct['badge']>, { label: string; className: string }> = {
   MAS_VENDIDO: { label: 'Más vendido', className: 'bg-primary text-ink' },
   NUEVO: { label: 'Nuevo', className: 'bg-primary text-ink' },
   OFERTA: { label: 'Oferta', className: 'bg-red-500 text-white' },
   EN_STOCK: { label: 'En stock', className: 'bg-emerald-500 text-white' },
 };
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: CatalogProduct }) {
   const add = useCart((s) => s.add);
 
   const discount =
-    product.originalPrice && product.originalPrice > product.price
+    product.price !== null && product.originalPrice && product.originalPrice > product.price
       ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
       : null;
 
   const badge = product.badge ? badgeStyles[product.badge] : null;
 
   function handleAdd() {
+    if (product.price === null) return;
     add({
       productId: product.id,
       slug: product.slug,
@@ -63,22 +65,28 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         ) : null}
 
-        <span className="absolute right-3 top-3 z-10 rounded-md bg-black/50 px-2 py-1 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/80 backdrop-blur">
-          {product.brand}
-        </span>
+        {product.brand && (
+          <span className="absolute right-3 top-3 z-10 rounded-md bg-black/50 px-2 py-1 text-[0.6rem] font-bold uppercase tracking-[0.2em] text-white/80 backdrop-blur">
+            {product.brand}
+          </span>
+        )}
 
-        <Image
-          src={product.imageSrc}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-contain p-8 transition duration-500 group-hover:scale-110 group-hover:rotate-3"
-        />
+        {product.imageSrc ? (
+          <Image
+            src={product.imageSrc}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-contain p-8 transition duration-500 group-hover:scale-110 group-hover:rotate-3"
+          />
+        ) : (
+          <NoPhoto />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-4">
         <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-white/50">
-          {product.brand}
+          {product.brand ?? product.categoryName}
         </p>
         <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-white/95">
           {product.name}
@@ -86,9 +94,9 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="mt-3 flex items-baseline gap-2">
           <span className="text-lg font-bold text-white">
-            {formatPrice(product.price)}
+            {product.price !== null ? formatPrice(product.price) : 'Consultar precio'}
           </span>
-          {product.originalPrice && (
+          {discount && product.originalPrice && (
             <span className="text-xs text-white/40 line-through">
               {formatPrice(product.originalPrice)}
             </span>
@@ -98,7 +106,8 @@ export function ProductCard({ product }: { product: Product }) {
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-xs font-black uppercase tracking-widest text-ink transition hover:bg-primary-hi active:scale-[0.98]"
+          disabled={product.price === null}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-xs font-black uppercase tracking-widest text-ink transition hover:bg-primary-hi active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ShoppingCart className="h-3.5 w-3.5" />
           Agregar

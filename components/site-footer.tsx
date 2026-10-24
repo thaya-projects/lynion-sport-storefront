@@ -22,7 +22,7 @@ const socials = [
 ];
 
 const categoryLinks = [
-  ...CATEGORIES.map((c) => ({ href: `/categorias/${c.slug}`, label: c.name })),
+  ...CATEGORIES.map((c) => ({ href: `/productos?category=${c.slug}`, label: c.name })),
   { href: '/marcas', label: 'Marcas' },
 ];
 

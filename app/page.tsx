@@ -9,6 +9,7 @@ import { WhatsAppProcess } from '@/components/whatsapp-process';
 import { TrustBar } from '@/components/trust-bar';
 import { JsonLd } from '@/components/seo/json-ld';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_PROFILES } from '@/lib/site';
+import { getHomeProducts, getProductCountsByCategory } from '@/lib/catalog';
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
@@ -46,16 +47,21 @@ const storeJsonLd = {
   parentOrganization: { '@id': `${SITE_URL}/#organization` },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [homeProducts, categoryCounts] = await Promise.all([
+    getHomeProducts(),
+    getProductCountsByCategory(),
+  ]);
+
   return (
     <>
       <JsonLd data={storeJsonLd} />
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-4 pb-16 pt-6 md:px-8">
         <HeroBanner />
-        <SportWorlds />
+        <SportWorlds counts={categoryCounts} />
         <BrandStrip />
-        <FeaturedProducts />
+        <FeaturedProducts items={homeProducts} />
         <WhatsAppProcess />
         <TrustBar />
       </main>

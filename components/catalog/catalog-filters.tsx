@@ -4,11 +4,17 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useTransition, useState } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { CATEGORIES } from '@/lib/categories';
-import { BRANDS } from '@/lib/mocks/products';
+import type { CatalogCategory } from '@/lib/catalog-types';
 import { cn } from '@/lib/utils';
 
-export function CatalogFilters({ className }: { className?: string }) {
+type Props = {
+  categories: CatalogCategory[];
+  brands: string[];
+  showOnSale: boolean;
+  className?: string;
+};
+
+export function CatalogFilters({ categories, brands, showOnSale, className }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -44,7 +50,7 @@ export function CatalogFilters({ className }: { className?: string }) {
           checked={!currentCategory}
           onChange={() => update('category', null)}
         />
-        {CATEGORIES.map((c) => (
+        {categories.map((c) => (
           <FilterRadio
             key={c.slug}
             label={c.name}
@@ -54,33 +60,37 @@ export function CatalogFilters({ className }: { className?: string }) {
         ))}
       </FilterSection>
 
-      <FilterSection title="Marca">
-        <FilterRadio
-          label="Todas"
-          checked={!currentBrand}
-          onChange={() => update('brand', null)}
-        />
-        {BRANDS.map((b) => (
+      {brands.length > 0 && (
+        <FilterSection title="Marca">
           <FilterRadio
-            key={b}
-            label={b}
-            checked={currentBrand === b}
-            onChange={() => update('brand', b)}
+            label="Todas"
+            checked={!currentBrand}
+            onChange={() => update('brand', null)}
           />
-        ))}
-      </FilterSection>
+          {brands.map((b) => (
+            <FilterRadio
+              key={b}
+              label={b}
+              checked={currentBrand === b}
+              onChange={() => update('brand', b)}
+            />
+          ))}
+        </FilterSection>
+      )}
 
-      <FilterSection title="Promociones">
-        <label className="flex cursor-pointer items-center gap-3 py-1 text-sm text-white/75 transition hover:text-white">
-          <input
-            type="checkbox"
-            checked={onSale}
-            onChange={(e) => update('onSale', e.target.checked ? '1' : null)}
-            className="h-4 w-4 shrink-0 rounded border-white/25 bg-transparent accent-primary"
-          />
-          En oferta
-        </label>
-      </FilterSection>
+      {showOnSale && (
+        <FilterSection title="Promociones">
+          <label className="flex cursor-pointer items-center gap-3 py-1 text-sm text-white/75 transition hover:text-white">
+            <input
+              type="checkbox"
+              checked={onSale}
+              onChange={(e) => update('onSale', e.target.checked ? '1' : null)}
+              className="h-4 w-4 shrink-0 rounded border-white/25 bg-transparent accent-primary"
+            />
+            En oferta
+          </label>
+        </FilterSection>
+      )}
 
       {hasActive && (
         <button
