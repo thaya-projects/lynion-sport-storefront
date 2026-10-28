@@ -22,7 +22,7 @@ export function FeaturedProducts({ items }: { items: CatalogProduct[] }) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+        className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4"
       >
         {items.map((p) => (
           <ProductCard key={p.id} product={p} />

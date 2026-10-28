@@ -42,7 +42,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-ink-soft"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/8 bg-ink-soft"
     >
       <div
         className="relative aspect-square overflow-hidden"
@@ -51,13 +51,13 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
         }}
       >
         {discount ? (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-primary px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-wider text-ink shadow-lg shadow-primary/30">
+          <span className="absolute left-2 top-2 z-10 rounded-full bg-primary px-2 py-0.5 text-[0.58rem] font-black uppercase tracking-wider text-ink shadow-lg shadow-primary/30 md:left-3 md:top-3 md:px-2.5 md:py-1 md:text-[0.62rem]">
             -{discount}%
           </span>
         ) : badge ? (
           <span
             className={cn(
-              'absolute left-3 top-3 z-10 rounded-full px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-wider',
+              'absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-[0.58rem] font-black uppercase tracking-wider md:left-3 md:top-3 md:px-2.5 md:py-1 md:text-[0.62rem]',
               badge.className,
             )}
           >
@@ -88,7 +88,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
         <p className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-white/50">
           {product.brand ?? product.categoryName}
         </p>
-        <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-white/95">
+        <h3 className="mt-1 line-clamp-2 min-h-[2.25rem] text-xs font-semibold text-white/95 md:min-h-[2.5rem] md:text-sm">
           {product.name}
         </h3>
 
@@ -109,7 +109,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
           disabled={product.price === null}
           className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-3 py-2.5 text-xs font-black uppercase tracking-widest text-ink transition hover:bg-primary-hi active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <ShoppingCart className="h-3.5 w-3.5" />
+          <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
           Agregar
         </button>
       </div>
