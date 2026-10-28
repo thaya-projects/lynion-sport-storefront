@@ -44,8 +44,13 @@ export function buildWhatsappUrl(phoneE164: string, message: string) {
   return `https://wa.me/${cleaned}?text=${encodeURIComponent(message)}`;
 }
 
-export function buildProductInquiryUrl(phoneE164: string, product: { name: string; brand: string; price: number }) {
-  const message = `Hola Lynion Sport, me interesa consultar por:\n\n${product.brand} — ${product.name}\n${formatPrice(product.price)}\n\n¿Está disponible?`;
+export function buildProductInquiryUrl(
+  phoneE164: string,
+  product: { name: string; brand?: string; price: number | null },
+) {
+  const title = product.brand ? `${product.brand} — ${product.name}` : product.name;
+  const price = product.price !== null ? `\n${formatPrice(product.price)}` : '';
+  const message = `Hola Lynion Sport, me interesa consultar por:\n\n${title}${price}\n\n¿Está disponible?`;
   return buildWhatsappUrl(phoneE164, message);
 }
 

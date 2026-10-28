@@ -1,10 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { products } from '@/lib/mocks/products';
+import { getAllProducts } from '@/lib/catalog';
 import { PRODUCT_SEO_ENABLED, SITE_URL } from '@/lib/site';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  // Ni las páginas ni los mocks tienen fecha de actualización real: se usa la
-  // fecha de generación. Con la API, usar la fecha de actualización de cada ítem.
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Las páginas fijas no tienen fecha de actualización real: se usa la de
+  // generación. Los productos usan updatedAt cuando la API lo devuelva.
   const now = new Date();
 
   const pages: MetadataRoute.Sitemap = [
@@ -14,11 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   if (!PRODUCT_SEO_ENABLED) return pages;
 
+  const products = await getAllProducts();
   return [
     ...pages,
     ...products.map((p) => ({
       url: `${SITE_URL}/productos/${p.slug}`,
-      lastModified: now,
+      lastModified: p.updatedAt ? new Date(p.updatedAt) : now,
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     })),

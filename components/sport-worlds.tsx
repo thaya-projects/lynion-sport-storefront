@@ -6,32 +6,28 @@ import { motion } from 'motion/react';
 import { SectionHeader } from '@/components/section-header';
 import { CATEGORIES } from '@/lib/categories';
 
-type WorldMeta = { count: number; image: string; tint: string };
+type WorldMeta = { image: string; tint: string };
 
 const worldMeta: Record<string, WorldMeta> = {
   futbol: {
-    count: 128,
     image: '/products/soccer.png',
     tint: 'radial-gradient(circle at 50% 55%, rgba(34,197,94,0.22), transparent 65%)',
   },
   futsal: {
-    count: 74,
     image: '/products/futsal.png',
     tint: 'radial-gradient(circle at 50% 55%, rgba(16,165,245,0.22), transparent 65%)',
   },
   voley: {
-    count: 62,
     image: '/products/volleyball.png',
     tint: 'radial-gradient(circle at 50% 55%, rgba(234,179,8,0.20), transparent 65%)',
   },
   basquet: {
-    count: 91,
     image: '/products/basketball.png',
     tint: 'radial-gradient(circle at 50% 55%, rgba(249,115,22,0.22), transparent 65%)',
   },
 };
 
-export function SportWorlds() {
+export function SportWorlds({ counts }: { counts: Record<string, number> }) {
   return (
     <section aria-labelledby="worlds-title" className="mt-14">
       <SectionHeader
@@ -53,9 +49,8 @@ export function SportWorlds() {
               transition={{ duration: 0.4, delay: idx * 0.06, ease: 'easeOut' }}
             >
               <Link
-                href={`/categorias/${cat.slug}`}
-                className="group relative block aspect-[4/5] overflow-hidden rounded-2xl border border-white/8 transition hover:border-primary/50 hover:shadow-[0_12px_32px_-12px_rgba(16,165,245,0.35)]"
-                style={{ background: `${meta.tint}, linear-gradient(180deg, #15151e 0%, #0a0a12 100%)` }}
+                href={`/productos?category=${cat.slug}`}
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-ink-soft transition hover:border-primary/40"
               >
                 <Image
                   src={meta.image}
@@ -72,12 +67,8 @@ export function SportWorlds() {
 
                 <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 md:p-4">
                   <div className="min-w-0">
-                    <p className="truncate text-base font-extrabold leading-tight text-white md:text-lg">
-                      {cat.name}
-                    </p>
-                    <p className="mt-0.5 text-[0.68rem] font-medium text-white/60 md:text-xs">
-                      {meta.count} productos
-                    </p>
+                    <p className="text-sm font-bold text-white">{cat.name}</p>
+                    <p className="text-[0.68rem] text-white/45">{formatCount(counts[cat.slug] ?? 0)}</p>
                   </div>
                   <span
                     aria-hidden
@@ -103,4 +94,8 @@ export function SportWorlds() {
       </div>
     </section>
   );
+}
+
+function formatCount(n: number) {
+  return n === 1 ? '1 producto' : `${n} productos`;
 }
