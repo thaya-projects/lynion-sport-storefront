@@ -3,29 +3,31 @@
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { ShoppingCart } from 'lucide-react';
-import type { Product } from '@/lib/mocks/products';
+import type { CatalogProduct } from '@/lib/catalog-types';
+import { NoPhoto } from '@/components/no-photo';
 import { formatPrice } from '@/lib/format';
 import { useCart } from '@/lib/cart/store';
 import { cn } from '@/lib/utils';
 
-const badgeStyles: Record<NonNullable<Product['badge']>, { label: string; className: string }> = {
+const badgeStyles: Record<NonNullable<CatalogProduct['badge']>, { label: string; className: string }> = {
   MAS_VENDIDO: { label: 'Más vendido', className: 'bg-primary text-ink' },
   NUEVO: { label: 'Nuevo', className: 'bg-primary text-ink' },
   OFERTA: { label: 'Oferta', className: 'bg-red-500 text-white' },
   EN_STOCK: { label: 'En stock', className: 'bg-emerald-500 text-white' },
 };
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: CatalogProduct }) {
   const add = useCart((s) => s.add);
 
   const discount =
-    product.originalPrice && product.originalPrice > product.price
+    product.price !== null && product.originalPrice && product.originalPrice > product.price
       ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
       : null;
 
   const badge = product.badge ? badgeStyles[product.badge] : null;
 
   function handleAdd() {
+    if (product.price === null) return;
     add({
       productId: product.id,
       slug: product.slug,
@@ -63,22 +65,28 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
         ) : null}
 
-        <span className="absolute right-2 top-2 z-10 rounded-md bg-black/50 px-1.5 py-0.5 text-[0.55rem] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur md:right-3 md:top-3 md:px-2 md:py-1 md:text-[0.6rem] md:tracking-[0.2em]">
-          {product.brand}
-        </span>
+        {product.brand && (
+          <span className="absolute right-2 top-2 z-10 rounded-md bg-black/50 px-1.5 py-0.5 text-[0.55rem] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur md:right-3 md:top-3 md:px-2 md:py-1 md:text-[0.6rem] md:tracking-[0.2em]">
+            {product.brand}
+          </span>
+        )}
 
-        <Image
-          src={product.imageSrc}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-contain p-4 transition duration-500 group-hover:scale-110 group-hover:rotate-3 md:p-8"
-        />
+        {product.imageSrc ? (
+          <Image
+            src={product.imageSrc}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-contain p-4 transition duration-500 group-hover:scale-110 group-hover:rotate-3 md:p-8"
+          />
+        ) : (
+          <NoPhoto />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-3 md:p-4">
         <p className="text-[0.58rem] font-bold uppercase tracking-[0.2em] text-white/50 md:text-[0.62rem] md:tracking-[0.24em]">
-          {product.brand}
+          {product.brand ?? product.categoryName}
         </p>
         <h3 className="mt-1 line-clamp-2 min-h-[2.25rem] text-xs font-semibold text-white/95 md:min-h-[2.5rem] md:text-sm">
           {product.name}
@@ -86,9 +94,9 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="mt-2 flex items-baseline gap-2 md:mt-3">
           <span className="text-base font-bold text-white md:text-lg">
-            {formatPrice(product.price)}
+            {product.price !== null ? formatPrice(product.price) : 'Consultar precio'}
           </span>
-          {product.originalPrice && (
+          {discount && product.originalPrice && (
             <span className="text-[0.65rem] text-white/40 line-through md:text-xs">
               {formatPrice(product.originalPrice)}
             </span>
@@ -98,7 +106,8 @@ export function ProductCard({ product }: { product: Product }) {
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-primary px-2 py-2 text-[0.65rem] font-black uppercase tracking-wider text-ink transition hover:bg-primary-hi active:scale-[0.98] md:mt-4 md:gap-2 md:px-3 md:py-2.5 md:text-xs md:tracking-widest"
+          disabled={product.price === null}
+          className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-primary px-2 py-2 text-[0.65rem] font-black uppercase tracking-wider text-ink transition hover:bg-primary-hi active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 md:mt-4 md:gap-2 md:px-3 md:py-2.5 md:text-xs md:tracking-widest"
         >
           <ShoppingCart className="h-3 w-3 md:h-3.5 md:w-3.5" />
           Agregar

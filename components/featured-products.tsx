@@ -1,12 +1,12 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { getFeaturedProducts } from '@/lib/mocks/products';
 import { ProductCard } from '@/components/product-card';
 import { SectionHeader } from '@/components/section-header';
+import type { CatalogProduct } from '@/lib/catalog-types';
 
-export function FeaturedProducts() {
-  const items = getFeaturedProducts();
+export function FeaturedProducts({ items }: { items: CatalogProduct[] }) {
+  if (items.length === 0) return null;
 
   return (
     <section aria-labelledby="featured-title" className="mt-14">

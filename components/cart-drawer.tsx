@@ -119,9 +119,11 @@ export function CartDrawer() {
                         aria-hidden
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-white/50">
-                          {item.brand}
-                        </p>
+                        {item.brand && (
+                          <p className="text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-white/50">
+                            {item.brand}
+                          </p>
+                        )}
                         <p className="line-clamp-2 text-sm font-medium text-white">{item.name}</p>
                         <p className="mt-1 text-sm font-bold text-white">
                           {formatPrice(item.price * item.qty)}
