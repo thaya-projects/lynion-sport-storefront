@@ -7,17 +7,24 @@ import { ProductCard } from '@/components/product-card';
 import { CatalogFilters } from '@/components/catalog/catalog-filters';
 import { SortSelect } from '@/components/catalog/sort-select';
 import { CatalogSearch } from '@/components/catalog/catalog-search';
-import { filterProducts, type Product } from '@/lib/mocks/products';
+import {
+  filterProducts,
+  getAllProducts,
+  getBrands,
+  getCategories,
+  hasProductsOnSale,
+} from '@/lib/catalog';
+import type { CatalogSort } from '@/lib/catalog-types';
 import { BASE_OPEN_GRAPH, DEFAULT_OG_IMAGE, SITE_NAME } from '@/lib/site';
 
 const CATALOG_DESCRIPTION =
   'Pelotas, indumentaria y accesorios deportivos de las mejores marcas. Molten, Spalding, Mikasa, Adidas, Nike y Wilson. Envíos a todo Bolivia.';
 
 type SearchParams = Promise<{
-  category?: Product['category'];
-  brand?: Product['brand'];
+  category?: string;
+  brand?: string;
   onSale?: string;
-  sort?: 'featured' | 'price-asc' | 'price-desc' | 'newest';
+  sort?: CatalogSort;
   q?: string;
 }>;
 
@@ -48,7 +55,8 @@ export async function generateMetadata({
 
 export default async function CatalogPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
-  const filtered = filterProducts({
+  const [all, categories] = await Promise.all([getAllProducts(), getCategories()]);
+  const filtered = filterProducts(all, {
     category: sp.category,
     brand: sp.brand,
     onSale: sp.onSale === '1',
@@ -67,7 +75,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
             Catálogo
           </h1>
           <p className="mt-1 text-sm text-white/55">
-            {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'} disponibles
+            {filtered.length === 1 ? '1 producto disponible' : `${filtered.length} productos disponibles`}
           </p>
         </header>
 
@@ -82,7 +90,11 @@ export default async function CatalogPage({ searchParams }: { searchParams: Sear
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr] lg:gap-8">
           <Suspense>
-            <CatalogFilters />
+            <CatalogFilters
+              categories={categories}
+              brands={getBrands(all)}
+              showOnSale={hasProductsOnSale(all)}
+            />
           </Suspense>
 
           <div>
