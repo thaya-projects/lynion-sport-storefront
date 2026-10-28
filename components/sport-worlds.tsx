@@ -50,7 +50,8 @@ export function SportWorlds({ counts }: { counts: Record<string, number> }) {
             >
               <Link
                 href={`/productos?category=${cat.slug}`}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-ink-soft transition hover:border-primary/40"
+                className="group relative block aspect-[4/5] overflow-hidden rounded-2xl border border-white/8 transition hover:border-primary/50 hover:shadow-[0_12px_32px_-12px_rgba(16,165,245,0.35)]"
+                style={{ background: `${meta.tint}, linear-gradient(180deg, #15151e 0%, #0a0a12 100%)` }}
               >
                 <Image
                   src={meta.image}
@@ -67,8 +68,12 @@ export function SportWorlds({ counts }: { counts: Record<string, number> }) {
 
                 <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 md:p-4">
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-white">{cat.name}</p>
-                    <p className="text-[0.68rem] text-white/45">{formatCount(counts[cat.slug] ?? 0)}</p>
+                    <p className="truncate text-base font-extrabold leading-tight text-white md:text-lg">
+                      {cat.name}
+                    </p>
+                    <p className="mt-0.5 text-[0.68rem] font-medium text-white/60 md:text-xs">
+                      {formatCount(counts[cat.slug] ?? 0)}
+                    </p>
                   </div>
                   <span
                     aria-hidden
