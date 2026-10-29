@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { Inter, Space_Grotesk, Caveat } from 'next/font/google';
 import { CartProvider } from '@/components/cart-provider';
 import { JsonLd } from '@/components/seo/json-ld';
-import { BASE_OPEN_GRAPH, SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_PROFILES } from '@/lib/site';
+import { BASE_OPEN_GRAPH, SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_PROFILES, WHATSAPP_NUMBER } from '@/lib/site';
 import './globals.css';
 
 const inter = Inter({
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 };
 
-const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+const whatsappNumber = WHATSAPP_NUMBER;
 
 const siteJsonLd = [
   {

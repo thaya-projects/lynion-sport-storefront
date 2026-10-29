@@ -22,17 +22,19 @@ export function SortSelect() {
     const next = new URLSearchParams(params);
     if (e.target.value === 'featured') next.delete('sort');
     else next.set('sort', e.target.value);
+    const qs = next.toString();
     startTransition(() => {
-      router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     });
   }
 
   return (
     <div className="relative inline-flex items-center">
       <select
+        aria-label="Ordenar productos"
         value={current}
         onChange={change}
-        className="appearance-none rounded-full border border-white/15 bg-ink-soft py-2 pl-4 pr-10 text-xs font-semibold text-white/85 transition hover:border-white/30 focus:border-primary focus:outline-none"
+        className="min-h-11 appearance-none rounded-full border border-white/15 bg-ink-soft pl-4 pr-10 text-sm font-semibold text-white/90 transition hover:border-white/30 focus:border-primary focus:outline-none"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value} className="bg-ink text-white">
@@ -42,7 +44,7 @@ export function SortSelect() {
       </select>
       <ChevronDown
         aria-hidden
-        className="pointer-events-none absolute right-3 h-3.5 w-3.5 text-white/50"
+        className="pointer-events-none absolute right-3.5 h-4 w-4 text-white/60"
       />
     </div>
   );

@@ -13,17 +13,17 @@ export function SectionHeader({ id, title, linkHref, linkLabel }: Props) {
     <header className="flex items-end justify-between gap-4">
       <h2
         id={id}
-        className="font-display text-3xl font-extrabold text-white md:text-4xl"
+        className="font-display text-2xl font-extrabold text-white sm:text-3xl md:text-4xl"
       >
         {title}
       </h2>
       {linkHref && linkLabel && (
         <Link
           href={linkHref}
-          className="hidden items-center gap-1.5 text-sm font-semibold text-lynion-500 hover:text-lynion-600 md:inline-flex"
+          className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-sm font-semibold text-primary transition hover:text-primary-hi"
         >
           {linkLabel}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
       )}
     </header>
