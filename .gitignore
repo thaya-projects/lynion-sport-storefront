@@ -11,3 +11,9 @@ dist/
 .vscode/
 .idea/
 next-env.d.ts
+
+# Caché de TypeScript: se regenera en cada compilación
+*.tsbuildinfo
+
+# Configuración personal de Claude Code (skills, imágenes del chat, permisos locales)
+.claude/

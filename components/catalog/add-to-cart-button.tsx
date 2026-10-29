@@ -10,8 +10,8 @@ export function AddToCartButton({ product }: { product: CatalogProduct }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
-  // Sin precio no se puede armar el pedido: queda la consulta por WhatsApp.
-  if (product.price === null) return null;
+  // Sin precio o agotado no se puede armar el pedido: queda la consulta por WhatsApp.
+  if (product.price === null || product.stock === 0) return null;
   const price = product.price;
 
   function handleAdd() {
@@ -23,6 +23,8 @@ export function AddToCartButton({ product }: { product: CatalogProduct }) {
         brand: product.brand,
         price,
         imageHue: product.imageHue,
+        imageSrc: product.imageSrc,
+        maxQty: product.stock,
       },
       qty,
     );
@@ -30,7 +32,7 @@ export function AddToCartButton({ product }: { product: CatalogProduct }) {
     setTimeout(() => setAdded(false), 1500);
   }
 
-  const maxStock = product.stock ?? 99;
+  const maxStock = Math.max(1, product.stock ?? 99);
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
@@ -39,17 +41,20 @@ export function AddToCartButton({ product }: { product: CatalogProduct }) {
           type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
           disabled={qty <= 1}
-          aria-label="Disminuir"
+          aria-label="Una unidad menos"
           className="flex h-11 w-11 items-center justify-center text-white/70 transition hover:text-white disabled:opacity-30"
         >
           <Minus className="h-4 w-4" />
         </button>
-        <span className="min-w-8 text-center text-sm font-bold text-white">{qty}</span>
+        <span aria-live="polite" className="min-w-8 text-center text-sm font-bold tabular-nums text-white">
+          <span className="sr-only">Cantidad: </span>
+          {qty}
+        </span>
         <button
           type="button"
           onClick={() => setQty((q) => Math.min(maxStock, q + 1))}
           disabled={qty >= maxStock}
-          aria-label="Aumentar"
+          aria-label="Una unidad más"
           className="flex h-11 w-11 items-center justify-center text-white/70 transition hover:text-white disabled:opacity-30"
         >
           <Plus className="h-4 w-4" />
@@ -59,7 +64,7 @@ export function AddToCartButton({ product }: { product: CatalogProduct }) {
       <button
         type="button"
         onClick={handleAdd}
-        className="group inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-ink transition hover:bg-primary-hi active:scale-[0.98]"
+        className="group inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-ink transition hover:bg-primary-hi active:scale-[0.98]"
       >
         {added ? (
           <>

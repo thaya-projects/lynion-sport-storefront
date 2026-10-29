@@ -27,12 +27,13 @@ const worldMeta: Record<string, WorldMeta> = {
   },
 };
 
-export function SportWorlds({ counts }: { counts: Record<string, number> }) {
+// counts es null si la API no respondió: se muestran las canchas sin el número.
+export function SportWorlds({ counts }: { counts: Record<string, number> | null }) {
   return (
     <section aria-labelledby="worlds-title" className="mt-14">
       <SectionHeader
         id="worlds-title"
-        title="Elegí tu cancha."
+        title="Elige tu cancha."
         linkHref="/productos"
         linkLabel="Ver todo"
       />
@@ -43,10 +44,10 @@ export function SportWorlds({ counts }: { counts: Record<string, number> }) {
           return (
             <motion.div
               key={cat.slug}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 12 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.4, delay: idx * 0.06, ease: 'easeOut' }}
+              transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
             >
               <Link
                 href={`/productos?category=${cat.slug}`}
@@ -71,9 +72,11 @@ export function SportWorlds({ counts }: { counts: Record<string, number> }) {
                     <p className="truncate text-base font-extrabold leading-tight text-white md:text-lg">
                       {cat.name}
                     </p>
-                    <p className="mt-0.5 text-[0.68rem] font-medium text-white/60 md:text-xs">
-                      {formatCount(counts[cat.slug] ?? 0)}
-                    </p>
+                    {counts && (
+                      <p className="mt-0.5 text-xs font-medium text-white/70">
+                        {formatCount(counts[cat.slug] ?? 0)}
+                      </p>
+                    )}
                   </div>
                   <span
                     aria-hidden
@@ -101,6 +104,8 @@ export function SportWorlds({ counts }: { counts: Record<string, number> }) {
   );
 }
 
+// Una cancha sin productos todavía no dice "0 productos": invita a consultar.
 function formatCount(n: number) {
+  if (n === 0) return 'Pronto';
   return n === 1 ? '1 producto' : `${n} productos`;
 }

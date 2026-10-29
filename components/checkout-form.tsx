@@ -2,21 +2,24 @@
 
 import { useState, useTransition } from 'react';
 import { Loader2 } from 'lucide-react';
-import { submitOrder } from '@/actions/submit-order';
+import { submitOrder, type OrderField } from '@/actions/submit-order';
 import { useCart } from '@/lib/cart/store';
-import { WhatsAppIcon } from '@/components/whatsapp-icon';
+import { cn } from '@/lib/utils';
 
-type Props = { onSuccess: (orderNumber: string) => void };
+type Props = { onSuccess: (orderNumber: string, waUrl: string) => void };
 
+// No abre WhatsApp ni vacía el carrito: después de un await el navegador
+// bloquea window.open (Safari en iPhone). El drawer muestra un enlace real y
+// recién al tocarlo se vacía el carrito.
 export function CheckoutForm({ onSuccess }: Props) {
   const items = useCart((s) => s.items);
-  const clear = useCart((s) => s.clear);
-  const closeDrawer = useCart((s) => s.closeDrawer);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<OrderField, string>>>({});
 
   function onSubmit(fd: FormData) {
     setError(null);
+    setFieldErrors({});
     startTransition(async () => {
       const res = await submitOrder({
         customer: {
@@ -28,25 +31,56 @@ export function CheckoutForm({ onSuccess }: Props) {
         items,
       });
       if (!res.ok) {
-        setError(res.error);
+        if (res.cart) useCart.getState().replaceItems(res.cart);
+        setFieldErrors(res.fieldErrors ?? {});
+        setError(res.error ?? null);
         return;
       }
-      window.open(res.waUrl, '_blank', 'noopener');
-      clear();
-      closeDrawer();
-      onSuccess(res.orderNumber);
+      onSuccess(res.orderNumber, res.waUrl);
     });
   }
 
   return (
-    <form action={onSubmit} className="space-y-3">
-      <Field name="name" label="Nombre completo" placeholder="Carlos Mamani" required />
-      <Field name="phone" label="Teléfono / WhatsApp" placeholder="+591 7 123 4567" required />
-      <Field name="city" label="Ciudad o zona" placeholder="Potosí, Zona Centro" required />
-      <Field name="notes" label="Notas (opcional)" placeholder="Ej: entregar por la tarde" />
+    // onSubmit y no action: con action, React vacía el formulario al terminar
+    // y un error (o un precio corregido) obligaría a escribir todo de nuevo.
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(new FormData(e.currentTarget));
+      }}
+      noValidate
+      className="space-y-4"
+    >
+      <Field
+        name="name"
+        label="Nombre completo"
+        placeholder="Carlos Mamani"
+        autoComplete="name"
+        error={fieldErrors.name}
+        required
+      />
+      <Field
+        name="phone"
+        label="Teléfono / WhatsApp"
+        placeholder="71234567"
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel"
+        error={fieldErrors.phone}
+        required
+      />
+      <Field
+        name="city"
+        label="Ciudad o zona"
+        placeholder="Potosí, Zona Centro"
+        autoComplete="address-level2"
+        error={fieldErrors.city}
+        required
+      />
+      <Field name="notes" label="Notas (opcional)" placeholder="Ej.: entregar por la tarde" />
 
       {error && (
-        <p className="rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+        <p role="alert" className="rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
           {error}
         </p>
       )}
@@ -54,21 +88,18 @@ export function CheckoutForm({ onSuccess }: Props) {
       <button
         type="submit"
         disabled={pending || items.length === 0}
-        className="mt-2 inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-whatsapp px-4 py-3 text-sm font-semibold text-white transition hover:bg-whatsapp-hi disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-full bg-primary px-4 text-sm font-bold text-ink transition hover:bg-primary-hi disabled:cursor-not-allowed disabled:opacity-60"
       >
         {pending ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Confirmando…
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            Preparando tu pedido…
           </>
         ) : (
-          <>
-            <WhatsAppIcon className="h-4 w-4" />
-            Confirmar y abrir WhatsApp
-          </>
+          'Confirmar pedido'
         )}
       </button>
-      <p className="text-center text-[0.65rem] text-white/50">
+      <p className="text-center text-xs text-white/60">
         Coordinamos pago y entrega por WhatsApp. No cobramos aquí.
       </p>
     </form>
@@ -80,24 +111,51 @@ function Field({
   label,
   placeholder,
   required,
+  error,
+  type = 'text',
+  inputMode,
+  autoComplete,
 }: {
   name: string;
   label: string;
   placeholder: string;
   required?: boolean;
+  error?: string;
+  type?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
+  autoComplete?: string;
 }) {
+  const errorId = `${name}-error`;
   return (
-    <label className="block">
-      <span className="mb-1 block text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-white/70">
+    <div>
+      <label htmlFor={name} className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.12em] text-white/75">
         {label}
-        {required && <span className="ml-1 text-primary">*</span>}
-      </span>
+        {required && (
+          <span aria-hidden className="ml-1 text-primary">
+            *
+          </span>
+        )}
+      </label>
       <input
+        id={name}
         name={name}
+        type={type}
+        inputMode={inputMode}
+        autoComplete={autoComplete}
         placeholder={placeholder}
         required={required}
-        className="w-full rounded-lg border border-white/10 bg-ink px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-lynion-500 focus:outline-none"
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
+        className={cn(
+          'min-h-11 w-full rounded-lg border bg-ink px-3 text-base text-white placeholder:text-white/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 md:text-sm',
+          error ? 'border-red-400' : 'border-white/15 focus:border-primary',
+        )}
       />
-    </label>
+      {error && (
+        <p id={errorId} className="mt-1.5 text-xs text-red-300">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }

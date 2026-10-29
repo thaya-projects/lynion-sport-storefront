@@ -10,8 +10,24 @@ export type ApiProduct = {
   // Solo tiene valor si el descuento está vigente ahora; el backend ya
   // resuelve las fechas.
   discountPrice: number | null;
+  // Imagen principal. imageUrls trae la galería completa (principal primero,
+  // luego por SortOrder); es opcional porque un backend sin actualizar no la
+  // devuelve.
   imageUrl: string | null;
+  imageUrls?: string[];
   categoryName: string | null;
+  // Opcionales: un backend sin actualizar no los devuelve y la UI los omite.
+  code?: string;
+  description?: string | null;
+  // JSON libre del formulario de producto de Thaya, ya aplanado a texto.
+  attributes?: Record<string, string>;
+  // null si el producto no controla stock.
+  stock?: number | null;
+  // Fin del descuento vigente (ISO); null si no tiene fecha de fin.
+  discountEndsAt?: string | null;
+  isFeatured?: boolean;
+  createdAt?: string;
+  updatedAt?: string | null;
 };
 
 export type ApiCategory = {
@@ -20,7 +36,16 @@ export type ApiCategory = {
 };
 
 export type ApiStorefront = {
-  company: { id: string; name: string; logoUrl: string | null; industry: string | null };
+  company: {
+    id: string;
+    name: string;
+    logoUrl: string | null;
+    industry: string | null;
+    phone?: string | null;
+    email?: string | null;
+    city?: string | null;
+    address?: string | null;
+  };
   stats: { categoryCount: number; productCount: number };
   featuredProduct: ApiProduct | null;
   topProducts: ApiProduct[];
