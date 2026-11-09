@@ -112,11 +112,16 @@ export const getAllProducts = cache(async (): Promise<CatalogProduct[]> => {
 });
 
 export const getCategories = cache(async (): Promise<CatalogCategory[]> => {
-  if (!CATALOG_FROM_API) return CATEGORIES.map(({ slug, name }) => ({ slug, name }));
+  if (!CATALOG_FROM_API) return CATEGORIES.map(({ slug, name }) => ({ slug, name, imageUrl: null, isRoot: true }));
   const storefront = await fetchStorefront();
   return storefront.categories.map((c) => {
     const slug = slugify(c.name);
-    return { slug, name: categoryDisplayName(slug, c.name) };
+    return {
+      slug,
+      name: categoryDisplayName(slug, c.name),
+      imageUrl: c.imageUrl ?? null,
+      isRoot: !c.parentId,
+    };
   });
 });
 

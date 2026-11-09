@@ -33,6 +33,10 @@ export type ApiProduct = {
 export type ApiCategory = {
   id: string;
   name: string;
+  // Foto subida en Thaya para la categoría; null si no tiene.
+  imageUrl?: string | null;
+  // null en las categorías principales.
+  parentId?: string | null;
 };
 
 export type ApiStorefront = {
@@ -60,9 +64,11 @@ type ApiCatalogPage = {
   totalPages: number;
 };
 
-// Los datos se cachean 5 minutos: un cambio en el sistema tarda hasta eso en
-// verse en el sitio.
-const REVALIDATE_SECONDS = 300;
+// En producción los datos se cachean 5 minutos como respaldo: lo normal es que
+// Thaya avise de cada cambio a /api/revalidate y se vea al instante. En
+// desarrollo no se cachea nada, así cualquier cambio (incluso por SQL) se ve
+// al recargar.
+const REVALIDATE_SECONDS = process.env.NODE_ENV === 'development' ? 0 : 300;
 const PAGE_SIZE = 100;
 const MAX_PAGES = 20;
 

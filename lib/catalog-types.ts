@@ -41,6 +41,10 @@ export type StoreInfo = {
 export type CatalogCategory = {
   slug: string;
   name: string;
+  // Foto cargada en Thaya (null: se usa la ilustración por defecto).
+  imageUrl?: string | null;
+  // false en subcategorías: "Elige tu cancha" solo muestra las principales.
+  isRoot?: boolean;
 };
 
 export type CatalogSort = 'featured' | 'price-asc' | 'price-desc' | 'newest';

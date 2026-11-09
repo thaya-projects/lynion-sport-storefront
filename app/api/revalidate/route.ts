@@ -1,11 +1,13 @@
 import { timingSafeEqual } from 'node:crypto';
 import { revalidateTag } from 'next/cache';
 import { NextResponse, type NextRequest } from 'next/server';
+import { CATALOG_CHANGED, storefrontLive } from '@/lib/live-updates';
 
 // Thaya llama aquí cada vez que cambia algo que la tienda muestra (productos,
 // fotos, stock, categorías, datos de la empresa). Se descarta la caché del
 // catálogo y la siguiente visita ya trae los datos nuevos, sin esperar los
-// 5 minutos de revalidación.
+// 5 minutos de revalidación. Además se avisa a las páginas abiertas
+// (/api/live) para que se refresquen solas.
 export async function POST(request: NextRequest) {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) {
@@ -18,6 +20,7 @@ export async function POST(request: NextRequest) {
   }
 
   revalidateTag('storefront');
+  storefrontLive.emit(CATALOG_CHANGED);
   return NextResponse.json({ revalidated: true, at: new Date().toISOString() });
 }
 
