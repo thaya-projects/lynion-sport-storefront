@@ -30,6 +30,7 @@ const itemsSchema = z
       name: z.string().min(1).max(200),
       price: z.number().nonnegative(),
       qty: z.number().int().min(1).max(999),
+      option: z.string().max(80).optional(),
     }).passthrough(),
   )
   .max(50);

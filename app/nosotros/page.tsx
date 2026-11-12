@@ -8,7 +8,7 @@ import { buildGeneralInquiryUrl } from '@/lib/whatsapp';
 import { BASE_OPEN_GRAPH, DEFAULT_OG_IMAGE, SITE_NAME, WHATSAPP_NUMBER } from '@/lib/site';
 
 const DESCRIPTION =
-  'Lynion Sport es una tienda de pelotas originales en Potosí, distribuidor autorizado de Molten, Mikasa, Spalding, Adidas, Nike y Wilson, con envíos a todo Bolivia.';
+  'Lynion Sport: especialistas en la importación y distribución de balones originales de Molten, Mikasa, Spalding, Adidas, Nike y Wilson. Desde Potosí a todo Bolivia.';
 
 export const metadata: Metadata = {
   title: 'Nosotros',
@@ -45,38 +45,41 @@ export default async function AboutPage() {
     <PageShell
       breadcrumb="Nosotros"
       title="Somos Lynion Sport"
-      lead={`Una tienda de pelotas originales en ${city}. Trabajamos con marcas oficiales y enviamos a todo Bolivia, con atención directa por WhatsApp.`}
+      lead={`Especialistas en la importación y distribución de balones originales de las mejores marcas mundiales. Desde ${city}, conectamos a deportistas y clubes de todo Bolivia con equipamiento oficial de alta gama, garantizando calidad, autenticidad y atención personalizada en cada compra.`}
     >
       <div className="mt-10">
         <InfoSection title="Qué vendemos">
           <p>
-            Pelotas de fútbol, futsal, vóley y básquet. Somos distribuidor autorizado de Molten, Mikasa,
-            Spalding, Adidas, Nike y Wilson, así que lo que compras es original.
+            Ponemos a tu disposición balones oficiales de fútbol, futsal, vóley y básquetbol. Trabajamos
+            directamente con marcas líderes como Molten, Mikasa, Spalding, Adidas, Nike y Wilson,
+            asegurando 100% de originalidad.
           </p>
           {size && size.products > 0 && (
             <p>
-              Hoy tenemos{' '}
+              Actualmente contamos con{' '}
               <strong className="font-semibold text-white">
                 {size.products === 1 ? '1 producto publicado' : `${size.products} productos publicados`}
               </strong>{' '}
-              en{' '}
+              distribuidos en{' '}
               <strong className="font-semibold text-white">
-                {size.sports === 1 ? '1 deporte' : `${size.sports} deportes`}
+                {size.sports === 1 ? '1 disciplina' : `${size.sports} disciplinas`}
               </strong>
-              , con precio y fotos actualizados desde nuestro inventario.
+              , con precios e inventario siempre actualizados.
             </p>
           )}
         </InfoSection>
 
         <InfoSection title="Cómo trabajamos">
           <p>
-            Sin cuentas ni pasarelas de pago. Eliges en el catálogo, nos envías el pedido por WhatsApp y
-            una persona del equipo te confirma stock, precio y envío antes de que pagues.
+            Comprar con nosotros es rápido, seguro y sin intermediarios. Explora nuestro catálogo, envíanos
+            tu pedido directamente por WhatsApp y un asesor de nuestro equipo te confirmará stock, precio y
+            detalles de envío antes de realizar cualquier pago.
           </p>
           <p>
-            Despachamos desde {city} a cualquier ciudad del país. Los detalles están en{' '}
+            Despachamos desde {city} hacia cualquier ciudad de Bolivia. Conoce más detalles en nuestra
+            sección de{' '}
             <Link href="/envios" className="font-semibold text-primary underline-offset-4 hover:underline">
-              Envíos, pagos y cambios
+              Envíos
             </Link>
             .
           </p>

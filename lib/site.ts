@@ -25,6 +25,8 @@ export const DEFAULT_OG_IMAGE = {
 // de WhatsApp quedarían como wa.me/ vacío.
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '+59163693408';
 
+export const CONTACT_EMAIL = 'lynionsports@gmail.com';
+
 // Horario de atención: lo usan el footer, Contacto y el JSON-LD de la tienda.
 export const STORE_HOURS = {
   label: 'Lun a Sáb · 9:00 — 20:00',

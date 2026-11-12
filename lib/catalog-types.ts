@@ -22,12 +22,16 @@ export type CatalogProduct = {
   createdAt?: string;
   description?: string;
   specs?: Record<string, string>;
+  // Característica con varios valores para elegir al comprar (ej. Talla: 5, 6, 7).
+  option?: ProductOption;
   sku?: string;
   updatedAt?: string;
 };
 
 // Datos de la tienda que se cargan en Thaya (Empresa). Sin API, solo lo que
 // el sitio ya conoce.
+export type ProductOption = { name: string; values: string[] };
+
 export type StoreInfo = {
   name: string;
   phone: string | null;
