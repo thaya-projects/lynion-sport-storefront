@@ -10,7 +10,7 @@ import { TrustBar } from '@/components/trust-bar';
 import { JsonLd } from '@/components/seo/json-ld';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SOCIAL_PROFILES, STORE_HOURS, WHATSAPP_NUMBER } from '@/lib/site';
 import type { StoreInfo } from '@/lib/catalog-types';
-import { getDealProducts, getHomeProducts, getProductCountsByCategory, getStoreInfo } from '@/lib/catalog';
+import { getCategories, getDealProducts, getHomeProducts, getProductCountsByCategory, getStoreInfo } from '@/lib/catalog';
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
@@ -53,7 +53,7 @@ function buildStoreJsonLd(store: StoreInfo) {
 export default async function HomePage() {
   // Si la API de Thaya no responde, la landing igual se muestra: sin
   // destacados ni conteos, pero con todo lo demás.
-  const [homeProducts, categoryCounts, allDeals, store] = await Promise.all([
+  const [homeProducts, categoryCounts, allDeals, store, categories] = await Promise.all([
     getHomeProducts().catch((error) => {
       console.error('Home: no se pudieron leer los destacados', error);
       return [];
@@ -67,6 +67,10 @@ export default async function HomePage() {
       return [];
     }),
     getStoreInfo(),
+    getCategories().catch((error) => {
+      console.error('Home: no se pudieron leer las categorías', error);
+      return null;
+    }),
   ]);
   // Las ofertas no repiten lo que ya está en "Los más vendidos".
   const deals = allDeals.filter((d) => !homeProducts.some((p) => p.id === d.id));
@@ -78,7 +82,10 @@ export default async function HomePage() {
       <main className="mx-auto max-w-7xl px-4 pb-16 pt-6 md:px-8">
         <HeroBanner hasFeatured={homeProducts.length > 0} />
         {/* Sin productos con categoría en Thaya, las canchas se muestran sin "0 productos". */}
-        <SportWorlds counts={categoryCounts && Object.keys(categoryCounts).length > 0 ? categoryCounts : null} />
+        <SportWorlds
+          categories={categories}
+          counts={categoryCounts && Object.keys(categoryCounts).length > 0 ? categoryCounts : null}
+        />
         <BrandStrip />
         <FeaturedProducts items={homeProducts} />
         <FeaturedProducts

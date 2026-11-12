@@ -14,8 +14,15 @@ export type CartItem = {
   imageSrc?: string | null;
   // Stock que informa Thaya; sin él, la cantidad no tiene tope.
   maxQty?: number;
+  // Talla (u otra opción) elegida, ej. "Talla 7". El mismo producto en dos tallas son dos líneas.
+  option?: string;
   qty: number;
 };
+
+// Identifica la línea del carrito: producto + opción elegida.
+export function cartItemKey(item: Pick<CartItem, 'productId' | 'option'>) {
+  return item.option ? `${item.productId}::${item.option}` : item.productId;
+}
 
 type CartState = {
   items: CartItem[];
@@ -27,8 +34,8 @@ type CartState = {
 
 type CartActions = {
   add: (item: Omit<CartItem, 'qty'>, qty?: number) => void;
-  remove: (productId: string) => void;
-  setQty: (productId: string, qty: number) => void;
+  remove: (key: string) => void;
+  setQty: (key: string, qty: number) => void;
   clear: () => void;
   // Reemplaza el carrito por la versión que corrigió el servidor (precios o
   // stock que cambiaron en Thaya).
@@ -48,12 +55,13 @@ export const useCart = create<CartState & CartActions>()(
       // Agregar no abre el carrito: se avisa y se sigue mirando productos.
       add: (item, qty = 1) =>
         set((state) => {
-          const lastAdded = { name: item.name, at: Date.now() };
-          const existing = state.items.find((i) => i.productId === item.productId);
+          const lastAdded = { name: item.option ? `${item.name} · ${item.option}` : item.name, at: Date.now() };
+          const key = cartItemKey(item);
+          const existing = state.items.find((i) => cartItemKey(i) === key);
           if (existing) {
             return {
               items: state.items.map((i) =>
-                i.productId === item.productId
+                cartItemKey(i) === key
                   ? { ...i, ...item, qty: clampQty(i.qty + qty, item.maxQty) }
                   : i,
               ),
@@ -62,15 +70,15 @@ export const useCart = create<CartState & CartActions>()(
           }
           return { items: [...state.items, { ...item, qty: clampQty(qty, item.maxQty) }], lastAdded };
         }),
-      remove: (productId) =>
-        set((state) => ({ items: state.items.filter((i) => i.productId !== productId) })),
-      setQty: (productId, qty) =>
+      remove: (key) =>
+        set((state) => ({ items: state.items.filter((i) => cartItemKey(i) !== key) })),
+      setQty: (key, qty) =>
         set((state) => ({
           items:
             qty <= 0
-              ? state.items.filter((i) => i.productId !== productId)
+              ? state.items.filter((i) => cartItemKey(i) !== key)
               : state.items.map((i) =>
-                  i.productId === productId ? { ...i, qty: clampQty(qty, i.maxQty) } : i,
+                  cartItemKey(i) === key ? { ...i, qty: clampQty(qty, i.maxQty) } : i,
                 ),
         })),
       clear: () => set({ items: [] }),

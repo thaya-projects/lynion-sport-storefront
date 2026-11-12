@@ -134,7 +134,16 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
         {dealEnd && <p className="mt-1 text-xs font-semibold text-red-300">Oferta hasta el {dealEnd}</p>}
 
         <div className="relative z-10 mt-auto pt-3 md:pt-4">
-          {canAdd ? (
+          {canAdd && product.option ? (
+            // Con tallas: se elige en la ficha, no se agrega a ciegas desde la tarjeta.
+            <Link
+              href={href}
+              aria-label={`Elegir ${product.option.name.toLowerCase()} de ${product.name}`}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-3 text-xs font-black uppercase tracking-wider text-ink transition hover:bg-primary-hi active:scale-[0.98]"
+            >
+              Elegir {product.option.name.toLowerCase()}
+            </Link>
+          ) : canAdd ? (
             <button
               type="button"
               onClick={handleAdd}

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
-import { ShieldCheck, Truck, RefreshCcw, Package } from 'lucide-react';
+import { ShieldCheck, Truck, Package } from 'lucide-react';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -13,6 +13,8 @@ import { getAllProducts, getProduct, getRelatedProducts } from '@/lib/catalog';
 import type { CatalogProduct } from '@/lib/catalog-types';
 import { JsonLd } from '@/components/seo/json-ld';
 import { truncateDescription } from '@/lib/seo';
+import { richTextToPlain } from '@/lib/rich-text';
+import { RichText } from '@/components/rich-text';
 import {
   BASE_OPEN_GRAPH,
   DEFAULT_OG_IMAGE,
@@ -54,7 +56,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const description = truncateDescription(productDescription(product));
+  const description = truncateDescription(richTextToPlain(productDescription(product)));
   const url = `/productos/${product.slug}`;
   return {
     title: product.name,
@@ -81,7 +83,7 @@ function buildProductJsonLd(product: CatalogProduct) {
     '@type': 'Product',
     '@id': `${url}#product`,
     name: product.name,
-    description: productDescription(product),
+    description: richTextToPlain(productDescription(product)),
     url,
     ...(product.sku && { sku: product.sku }),
     ...(product.images.length > 0 && {
@@ -236,15 +238,12 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
                 Despachamos desde Potosí. El costo depende del destino y lo confirmamos por WhatsApp antes
                 de que pagues.
               </PurchaseInfo>
-              <PurchaseInfo icon={RefreshCcw} title="Cambios hasta 15 días">
-                Si algo no está bien, escríbenos y lo coordinamos.
-              </PurchaseInfo>
               <PurchaseInfo icon={ShieldCheck} title="Productos originales">
                 Somos distribuidor autorizado de las marcas que vendemos.
               </PurchaseInfo>
             </ul>
 
-            <p className="mt-8 max-w-prose text-base leading-relaxed text-white/75">{description}</p>
+            <RichText text={description} className="mt-8 max-w-prose space-y-4 text-base leading-relaxed text-white/75" />
 
             {product.specs && Object.keys(product.specs).length > 0 && (
               <div className="mt-8 rounded-2xl border border-white/8 bg-ink-soft p-6">

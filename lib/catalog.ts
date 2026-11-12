@@ -1,6 +1,6 @@
 import { cache } from 'react';
 import { fetchAllCatalogProducts, fetchStorefront, type ApiProduct } from '@/lib/api/storefront';
-import type { CatalogCategory, CatalogFilters, CatalogProduct, StoreInfo } from '@/lib/catalog-types';
+import type { CatalogCategory, CatalogFilters, CatalogProduct, ProductOption, StoreInfo } from '@/lib/catalog-types';
 import { CATEGORIES, categoryDisplayName, categoryHue, slugify } from '@/lib/categories';
 import { products as mockProducts } from '@/lib/mocks/products';
 import { SITE_NAME, WHATSAPP_NUMBER } from '@/lib/site';
@@ -51,7 +51,26 @@ function apiAttributes(attributes: Record<string, string> | undefined) {
     if (BRAND_KEYS.has(key.trim().toLowerCase())) brand = value;
     else specs[capitalize(key.trim())] = value;
   }
-  return { brand, specs: Object.keys(specs).length > 0 ? specs : undefined };
+  // Lo que se elige al comprar (Talla) ya se ve en el selector: no se repite en especificaciones.
+  const option = productOption(specs);
+  if (option) delete specs[option.name];
+  return { brand, specs: Object.keys(specs).length > 0 ? specs : undefined, option };
+}
+
+// "Talla: 5, 6, 7" (o Tamaño, Medida, Número, Color) con más de un valor: el cliente elige uno
+// al agregar al carrito. Thaya guarda las tallas repetidas juntas, separadas por coma.
+const OPTION_KEY = /^(tallas?|tama[ñn]os?|medidas?|n[uú]meros?|colou?r(es)?|size)$/i;
+
+function productOption(specs: Record<string, string>): ProductOption | undefined {
+  for (const [name, raw] of Object.entries(specs)) {
+    if (!OPTION_KEY.test(name.trim())) continue;
+    const values = [...new Set(raw.split(/\s*(?:,|;|\/|\s+y\s+)\s*/i).map((v) => v.trim()).filter(Boolean))];
+    if (values.length < 2) continue;
+    const numeric = values.every((v) => /\d/.test(v));
+    if (numeric) values.sort((a, b) => parseFloat(a.replace(/[^\d.]/g, '')) - parseFloat(b.replace(/[^\d.]/g, '')));
+    return { name, values };
+  }
+  return undefined;
 }
 
 // En Thaya las claves de atributos se escriben a mano ("tamaño"); en la ficha
@@ -69,7 +88,7 @@ function isRecent(iso: string | undefined) {
 function fromApi(p: ApiProduct): CatalogProduct {
   const category = p.categoryName ? slugify(p.categoryName) : null;
   const images = apiImages(p);
-  const { brand, specs } = apiAttributes(p.attributes);
+  const { brand, specs, option } = apiAttributes(p.attributes);
   return {
     id: p.id,
     slug: apiProductSlug(p),
@@ -82,6 +101,7 @@ function fromApi(p: ApiProduct): CatalogProduct {
     imageHue: categoryHue(category),
     brand,
     specs,
+    option,
     sku: p.code || undefined,
     description: p.description?.trim() || undefined,
     stock: p.stock === null || p.stock === undefined ? undefined : Math.max(0, Math.floor(p.stock)),
@@ -112,11 +132,16 @@ export const getAllProducts = cache(async (): Promise<CatalogProduct[]> => {
 });
 
 export const getCategories = cache(async (): Promise<CatalogCategory[]> => {
-  if (!CATALOG_FROM_API) return CATEGORIES.map(({ slug, name }) => ({ slug, name }));
+  if (!CATALOG_FROM_API) return CATEGORIES.map(({ slug, name }) => ({ slug, name, imageUrl: null, isRoot: true }));
   const storefront = await fetchStorefront();
   return storefront.categories.map((c) => {
     const slug = slugify(c.name);
-    return { slug, name: categoryDisplayName(slug, c.name) };
+    return {
+      slug,
+      name: categoryDisplayName(slug, c.name),
+      imageUrl: c.imageUrl ?? null,
+      isRoot: !c.parentId,
+    };
   });
 });
 

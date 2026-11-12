@@ -21,7 +21,7 @@ export function buildWhatsappMessage({ orderNumber, items, subtotal, customer }:
     '',
     orderNumber ? `Pedido: ${orderNumber}` : 'Pedido nuevo',
     '──────────────',
-    ...items.map((i) => `• ${i.qty}× ${i.name} — ${formatPrice(i.price * i.qty)}`),
+    ...items.map((i) => `• ${i.qty}× ${i.name}${i.option ? ` (${i.option})` : ''} — ${formatPrice(i.price * i.qty)}`),
     '──────────────',
     `Subtotal: ${formatPrice(subtotal)}`,
     '',

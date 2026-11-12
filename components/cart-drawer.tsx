@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'motion/react';
 import { X, Minus, Plus, Trash2, ShoppingBag, Check, ArrowLeft } from 'lucide-react';
-import { cartCount, cartSubtotal, useCart } from '@/lib/cart/store';
+import { cartCount, cartSubtotal, useCart, cartItemKey } from '@/lib/cart/store';
 import { formatPrice } from '@/lib/format';
 import { useDialog } from '@/lib/use-dialog';
 import { CheckoutForm } from '@/components/checkout-form';
@@ -153,7 +153,7 @@ export function CartDrawer() {
               <>
                 <ul className="flex-1 divide-y divide-white/5 overflow-y-auto px-5">
                   {items.map((item) => (
-                    <li key={item.productId} className="flex gap-3 py-4">
+                    <li key={cartItemKey(item)} className="flex gap-3 py-4">
                       <CartThumb item={item} />
                       <div className="min-w-0 flex-1">
                         {item.brand && (
@@ -168,6 +168,7 @@ export function CartDrawer() {
                         >
                           {item.name}
                         </Link>
+                        {item.option && <p className="mt-0.5 text-xs font-semibold text-primary">{item.option}</p>}
                         <p className="mt-1 text-sm font-bold tabular-nums text-white">
                           {formatPrice(item.price * item.qty)}
                         </p>
@@ -175,7 +176,7 @@ export function CartDrawer() {
                       <div className="flex flex-col items-end justify-between gap-2">
                         <button
                           type="button"
-                          onClick={() => remove(item.productId)}
+                          onClick={() => remove(cartItemKey(item))}
                           aria-label={`Quitar ${item.name} del carrito`}
                           className="-mr-3 -mt-2 flex h-11 w-11 items-center justify-center text-white/50 transition hover:text-red-400"
                         >
@@ -184,7 +185,7 @@ export function CartDrawer() {
                         <div className="flex items-center rounded-full border border-white/10">
                           <button
                             type="button"
-                            onClick={() => setQty(item.productId, item.qty - 1)}
+                            onClick={() => setQty(cartItemKey(item), item.qty - 1)}
                             className="flex h-11 w-10 items-center justify-center text-white/70 transition hover:text-white"
                             aria-label={`Quitar una unidad de ${item.name}`}
                           >
@@ -195,7 +196,7 @@ export function CartDrawer() {
                           </span>
                           <button
                             type="button"
-                            onClick={() => setQty(item.productId, item.qty + 1)}
+                            onClick={() => setQty(cartItemKey(item), item.qty + 1)}
                             className="flex h-11 w-10 items-center justify-center text-white/70 transition hover:text-white"
                             aria-label={`Agregar una unidad de ${item.name}`}
                           >

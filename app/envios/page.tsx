@@ -8,15 +8,15 @@ import { buildWhatsappUrl } from '@/lib/whatsapp';
 import { BASE_OPEN_GRAPH, DEFAULT_OG_IMAGE, SITE_NAME, STORE_HOURS, WHATSAPP_NUMBER } from '@/lib/site';
 
 const DESCRIPTION =
-  'Cómo comprar en Lynion Sport: envíos desde Potosí a todo Bolivia, pago coordinado por WhatsApp y cambios hasta 15 días.';
+  'Cómo comprar en Lynion Sport: envíos desde Potosí a todo Bolivia, pago coordinado por WhatsApp.';
 
 export const metadata: Metadata = {
-  title: 'Envíos, pagos y cambios',
+  title: 'Envíos y pagos',
   description: DESCRIPTION,
   alternates: { canonical: '/envios' },
   openGraph: {
     ...BASE_OPEN_GRAPH,
-    title: `Envíos, pagos y cambios · ${SITE_NAME}`,
+    title: `Envíos y pagos · ${SITE_NAME}`,
     description: DESCRIPTION,
     url: '/envios',
     images: [DEFAULT_OG_IMAGE],
@@ -73,8 +73,8 @@ export default function ShippingPage() {
 
   return (
     <PageShell
-      breadcrumb="Envíos, pagos y cambios"
-      title="Envíos, pagos y cambios"
+      breadcrumb="Envíos y pagos"
+      title="Envíos y pagos"
       lead="Despachamos desde Potosí a todo Bolivia. Todo se coordina por WhatsApp con una persona del equipo, antes de que pagues."
     >
       <JsonLd data={faqJsonLd} />
@@ -114,13 +114,6 @@ export default function ShippingPage() {
           <p>
             En el sitio no se cobra nada. Al confirmar tu pedido por WhatsApp te indicamos las formas de
             pago disponibles y el total con envío incluido.
-          </p>
-        </InfoSection>
-
-        <InfoSection id="cambios" title="Cambios">
-          <p>
-            Tienes hasta <strong className="font-semibold text-white">15 días</strong> para pedir un cambio.
-            Escríbenos por WhatsApp con tu número de pedido (empieza con LS-) y te explicamos cómo hacerlo.
           </p>
         </InfoSection>
 

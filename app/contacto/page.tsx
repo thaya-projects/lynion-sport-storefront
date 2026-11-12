@@ -122,7 +122,7 @@ export default async function ContactPage() {
           ))}
         </ul>
         <p className="mt-6 text-base text-white/75">
-          ¿Dudas sobre envíos o cambios? Mira{' '}
+          ¿Dudas sobre envíos o pagos? Mira{' '}
           <Link href="/envios#preguntas" className="contact-link">
             las preguntas frecuentes
           </Link>
