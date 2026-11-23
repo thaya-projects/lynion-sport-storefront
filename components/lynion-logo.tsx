@@ -9,7 +9,7 @@ type Props = {
 export function LynionLogo({ className, priority = false }: Props) {
   return (
     <Image
-      src="/logo/lynion-sport.png"
+      src="/logo/lynion-sport.webp"
       alt="Lynion Sport"
       width={950}
       height={253}
