@@ -6,8 +6,10 @@ export type Product = {
   category: 'futbol' | 'futsal' | 'voley' | 'basquet';
   price: number;
   originalPrice?: number;
+  discountEndsAt?: string;
   imageHue: number;
   imageSrc: string;
+  images?: string[];
   badge?: 'MAS_VENDIDO' | 'NUEVO' | 'OFERTA' | 'EN_STOCK';
   featured?: boolean;
   stock?: number;
@@ -32,6 +34,7 @@ export const products: Product[] = [
     price: 272,
     imageHue: 145,
     imageSrc: SOCCER_IMG,
+    images: [SOCCER_IMG, '/products/soccer.png'],
     featured: true,
     badge: 'MAS_VENDIDO',
     stock: 24,
@@ -75,7 +78,7 @@ export const products: Product[] = [
     imageHue: 145,
     imageSrc: SOCCER_IMG,
     badge: 'NUEVO',
-    stock: 8,
+    stock: 3,
     description:
       'Réplica oficial de la Premier League 2026. Visibilidad alta en cancha con diseño cromático contrastante.',
     specs: {
@@ -118,6 +121,7 @@ export const products: Product[] = [
     price: 369,
     imageHue: 45,
     imageSrc: FUTSAL_IMG,
+    images: [FUTSAL_IMG, '/products/futsal.png'],
     featured: true,
     badge: 'NUEVO',
     stock: 18,
@@ -202,8 +206,10 @@ export const products: Product[] = [
     category: 'voley',
     price: 486,
     originalPrice: 649,
+    discountEndsAt: '2026-11-15T23:59:00-04:00',
     imageHue: 210,
     imageSrc: VOLLEY_IMG,
+    images: [VOLLEY_IMG, '/products/volleyball.png'],
     featured: true,
     badge: 'OFERTA',
     stock: 9,
@@ -247,7 +253,7 @@ export const products: Product[] = [
     price: 320,
     imageHue: 210,
     imageSrc: VOLLEY_IMG,
-    stock: 14,
+    stock: 0,
     description:
       'Oficial de la AVP (Association of Volleyball Professionals). Pensada también para vóley playa.',
     specs: {
@@ -289,8 +295,10 @@ export const products: Product[] = [
     category: 'basquet',
     price: 475,
     originalPrice: 669,
+    discountEndsAt: '2026-11-30T23:59:00-04:00',
     imageHue: 20,
     imageSrc: BASKET_IMG,
+    images: [BASKET_IMG, '/products/basketball.png'],
     featured: true,
     badge: 'EN_STOCK',
     stock: 18,
@@ -306,7 +314,7 @@ export const products: Product[] = [
   {
     id: 'p-014',
     slug: 'basketball-molten-gg7x',
-    name: 'Basketball Molten GG7X',
+    name: 'Pelota de Básquet Molten GG7X',
     brand: 'Molten',
     category: 'basquet',
     price: 580,
@@ -327,7 +335,7 @@ export const products: Product[] = [
   {
     id: 'p-015',
     slug: 'basketball-wilson-evolution',
-    name: 'Basketball Wilson Evolution',
+    name: 'Pelota de Básquet Wilson Evolution',
     brand: 'Wilson',
     category: 'basquet',
     price: 390,
@@ -347,7 +355,7 @@ export const products: Product[] = [
   {
     id: 'p-016',
     slug: 'basketball-spalding-nba-replica',
-    name: 'Basketball Spalding NBA Réplica',
+    name: 'Pelota de Básquet Spalding NBA Réplica',
     brand: 'Spalding',
     category: 'basquet',
     price: 520,

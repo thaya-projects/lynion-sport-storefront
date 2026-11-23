@@ -9,6 +9,8 @@ import { LynionLogo } from '@/components/lynion-logo';
 import { WhatsAppCTA } from '@/components/whatsapp-cta';
 import { CartBadge } from '@/components/cart-badge';
 import { buildGeneralInquiryUrl } from '@/lib/whatsapp';
+import { WHATSAPP_NUMBER } from '@/lib/site';
+import { useDialog } from '@/lib/use-dialog';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -22,13 +24,13 @@ const navLinks = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '';
-  const waUrl = buildGeneralInquiryUrl(wa);
+  const waUrl = buildGeneralInquiryUrl(WHATSAPP_NUMBER);
+  const menuRef = useDialog<HTMLElement>(open, () => setOpen(false));
 
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-white/5 bg-ink/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-4 md:px-8">
+        <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-3 md:px-8">
           <Link href="/" aria-label="Lynion Sport — inicio" className="shrink-0">
             <LynionLogo priority />
           </Link>
@@ -43,8 +45,9 @@ export function SiteHeader() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'relative py-1 text-[0.82rem] font-semibold transition',
+                    'relative py-1 text-sm font-semibold transition',
                     active ? 'text-lynion-500' : 'text-white/80 hover:text-white',
                   )}
                 >
@@ -60,26 +63,26 @@ export function SiteHeader() {
             })}
           </nav>
 
-          <div className="ml-auto flex items-center gap-3 lg:ml-4">
-            <button
-              type="button"
+          <div className="ml-auto flex items-center gap-2 md:gap-3 lg:ml-4">
+            <Link
+              href="/productos#buscar"
               aria-label="Buscar productos"
-              className="hidden rounded-full p-2 text-white/70 transition hover:text-white lg:inline-flex"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-white/70 transition hover:bg-white/5 hover:text-white"
             >
               <Search className="h-5 w-5" />
-            </button>
+            </Link>
 
             <CartBadge />
 
             <WhatsAppCTA href={waUrl} size="md" className="hidden md:inline-flex">
-              Chateá por WhatsApp
+              Chatea por WhatsApp
             </WhatsAppCTA>
 
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Abrir menú"
-              className="rounded-lg border border-white/10 p-2 text-white/85 transition hover:border-white/30 hover:text-white lg:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 text-white/85 transition hover:border-white/30 hover:text-white lg:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -98,6 +101,7 @@ export function SiteHeader() {
             className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm lg:hidden"
           >
             <motion.aside
+              ref={menuRef}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -105,17 +109,18 @@ export function SiteHeader() {
               onClick={(e) => e.stopPropagation()}
               className="ml-auto flex h-full w-full max-w-sm flex-col border-l border-white/10 bg-ink-soft"
               role="dialog"
+              aria-modal="true"
               aria-label="Menú de navegación"
             >
-              <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+              <div className="flex items-center justify-between border-b border-white/10 py-3 pl-5 pr-3">
                 <LynionLogo />
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Cerrar menú"
-                  className="rounded-lg p-1.5 text-white/70 transition hover:bg-white/5 hover:text-white"
+                  className="flex h-11 w-11 items-center justify-center rounded-lg text-white/70 transition hover:bg-white/5 hover:text-white"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
@@ -142,7 +147,7 @@ export function SiteHeader() {
 
               <div className="border-t border-white/10 p-5">
                 <WhatsAppCTA href={waUrl} className="w-full">
-                  Chateá por WhatsApp
+                  Chatea por WhatsApp
                 </WhatsAppCTA>
               </div>
             </motion.aside>

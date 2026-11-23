@@ -1,20 +1,43 @@
 import type { NextConfig } from 'next';
 
+type RemotePattern = NonNullable<NonNullable<NextConfig['images']>['remotePatterns']>[number];
+
+// En producción las fotos de Thaya vienen de S3 (amazonaws). Con el backend
+// guardando en disco (Storage:Provider=Local) se sirven desde el mismo host de
+// la API bajo /uploads, así que se permite ese origen.
+function inventoriesUploadsPattern(): RemotePattern[] {
+  const apiUrl = process.env.INVENTORIES_API_URL;
+  if (!apiUrl) return [];
+  try {
+    const { protocol, hostname, port } = new URL(apiUrl);
+    return [
+      {
+        protocol: protocol.replace(':', '') as 'http' | 'https',
+        hostname,
+        port,
+        pathname: '/uploads/**',
+      },
+    ];
+  } catch {
+    return [];
+  }
+}
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
+    // Con IMAGES_UNOPTIMIZED=true Vercel no procesa ninguna imagen (costo 0):
+    // el navegador las baja tal cual de S3. Activarlo solo cuando el backend
+    // ya haya convertido todas las fotos a WebP livianos.
+    unoptimized: process.env.IMAGES_UNOPTIMIZED === 'true',
     remotePatterns: [
       { protocol: 'https', hostname: '**.amazonaws.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
-      // El backend local guarda las fotos en disco y las sirve desde
-      // http://localhost:5293/uploads. Solo en desarrollo.
-      ...(process.env.NODE_ENV === 'development'
-        ? [{ protocol: 'http' as const, hostname: 'localhost', port: '5293', pathname: '/uploads/**' }]
-        : []),
+      ...inventoriesUploadsPattern(),
     ],
     // Vercel cobra cada transformación. Las fotos de S3 no traen Cache-Control,
-    // así que con el TTL por defecto (60 s) se volvían a transformar cada
-    // minuto. Cachear 31 días es seguro: al reemplazar una foto su URL cambia.
+    // así que con el TTL por defecto se volvían a transformar seguido.
+    // Cachear 31 días es seguro: al reemplazar una foto su URL cambia.
     minimumCacheTTL: 2678400,
     // Menos anchos posibles = menos transformaciones distintas por imagen.
     deviceSizes: [640, 828, 1200, 1920],

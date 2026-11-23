@@ -13,14 +13,10 @@ export function BrandStrip() {
   return (
     <section
       aria-label="Marcas oficiales que trabajamos"
-      className="relative mt-12 overflow-hidden rounded-2xl border border-white/8"
-      style={{
-        background:
-          'linear-gradient(120deg, rgba(16,165,245,0.10) 0%, rgba(20,20,32,0.95) 45%, rgba(123,44,191,0.15) 100%)',
-      }}
+      className="relative mt-12 overflow-hidden rounded-2xl border border-white/8 bg-ink-soft"
     >
       <div className="border-b border-white/5 px-6 py-3">
-        <p className="text-[0.62rem] font-black uppercase tracking-[0.32em] text-white/55">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/65">
           Marcas oficiales que trabajamos
         </p>
       </div>
@@ -35,9 +31,11 @@ export function BrandStrip() {
               <div
                 key={`${brand.name}-${idx}`}
                 aria-hidden={isLoopCopy || undefined}
+                data-loop-copy={isLoopCopy || undefined}
                 className="flex shrink-0 items-center gap-14 md:gap-20"
               >
-                {/* SVG: next/image no lo optimiza, así que se usa <img> directo. */}
+                {/* SVG: next/image no lo optimiza, así que se usa <img> directo.
+                    Los logos vienen en color oscuro: se pasan a blanco para leerse sobre negro. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={brand.file}
@@ -45,7 +43,7 @@ export function BrandStrip() {
                   loading="lazy"
                   decoding="async"
                   style={{ height: brand.height }}
-                  className="w-auto opacity-80 transition duration-300 hover:opacity-100"
+                  className="w-auto opacity-75 brightness-0 invert transition duration-300 hover:opacity-100"
                 />
                 <span aria-hidden className="h-2 w-2 shrink-0 rounded-full bg-accent/70" />
               </div>
@@ -55,11 +53,11 @@ export function BrandStrip() {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-ink via-ink/80 to-transparent"
+          className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-ink-soft to-transparent motion-reduce:hidden"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-ink via-ink/80 to-transparent"
+          className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-ink-soft to-transparent motion-reduce:hidden"
         />
       </div>
     </section>

@@ -21,6 +21,20 @@ export const DEFAULT_OG_IMAGE = {
   alt: 'Lynion Sport — Pelotas y equipamiento deportivo en Bolivia',
 };
 
+// Un solo número para todo el sitio: sin la variable de entorno, los enlaces
+// de WhatsApp quedarían como wa.me/ vacío.
+export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '+59163693408';
+
+export const CONTACT_EMAIL = 'lynionsports@gmail.com';
+
+// Horario de atención: lo usan el footer, Contacto y el JSON-LD de la tienda.
+export const STORE_HOURS = {
+  label: 'Lun a Sáb · 9:00 — 20:00',
+  days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  opens: '09:00',
+  closes: '20:00',
+} as const;
+
 export const SOCIAL_PROFILES = {
   instagram: 'https://instagram.com/lynionsport',
   facebook: 'https://facebook.com/lynionsport',

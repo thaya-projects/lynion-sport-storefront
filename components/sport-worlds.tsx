@@ -5,8 +5,11 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { SectionHeader } from '@/components/section-header';
 import { CATEGORIES } from '@/lib/categories';
+import type { CatalogCategory } from '@/lib/catalog-types';
 
 type WorldMeta = { image: string; tint: string };
+
+const DEFAULT_TINT = 'radial-gradient(circle at 50% 55%, rgba(16,165,245,0.18), transparent 65%)';
 
 const worldMeta: Record<string, WorldMeta> = {
   futbol: {
@@ -27,39 +30,62 @@ const worldMeta: Record<string, WorldMeta> = {
   },
 };
 
-export function SportWorlds({ counts }: { counts: Record<string, number> }) {
+// Las canchas salen de las categorías de Thaya: la foto que se sube allí reemplaza
+// la ilustración por defecto, y una categoría nueva aparece sola. Sin API
+// (categories null o vacío) se usan las cuatro de siempre.
+// counts es null si la API no respondió: se muestran las canchas sin el número.
+export function SportWorlds({
+  categories,
+  counts,
+}: {
+  categories: CatalogCategory[] | null;
+  counts: Record<string, number> | null;
+}) {
+  const roots = categories?.filter((c) => c.isRoot !== false) ?? [];
+  const worlds = roots.length > 0 ? roots : CATEGORIES.map((c) => ({ ...c, imageUrl: null }));
+
   return (
     <section aria-labelledby="worlds-title" className="mt-14">
       <SectionHeader
         id="worlds-title"
-        title="Elegí tu cancha."
+        title="Elige tu cancha."
         linkHref="/productos"
         linkLabel="Ver todo"
       />
 
       <div className="mt-6 grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-        {CATEGORIES.map((cat, idx) => {
+        {worlds.map((cat, idx) => {
           const meta = worldMeta[cat.slug];
+          const image = cat.imageUrl ?? meta?.image ?? null;
           return (
             <motion.div
               key={cat.slug}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 12 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.4, delay: idx * 0.06, ease: 'easeOut' }}
+              transition={{ duration: 0.5, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
             >
               <Link
                 href={`/productos?category=${cat.slug}`}
                 className="group relative block aspect-[4/5] overflow-hidden rounded-2xl border border-white/8 transition hover:border-primary/50 hover:shadow-[0_12px_32px_-12px_rgba(16,165,245,0.35)]"
-                style={{ background: `${meta.tint}, linear-gradient(180deg, #15151e 0%, #0a0a12 100%)` }}
+                style={{ background: `${meta?.tint ?? DEFAULT_TINT}, linear-gradient(180deg, #15151e 0%, #0a0a12 100%)` }}
               >
-                <Image
-                  src={meta.image}
-                  alt={`Pelota de ${cat.name.toLowerCase()}`}
-                  fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-contain p-8 transition duration-500 ease-out group-hover:scale-110 md:p-12"
-                />
+                {image ? (
+                  <Image
+                    src={image}
+                    alt={cat.name}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-contain p-8 transition duration-500 ease-out group-hover:scale-110 md:p-12"
+                  />
+                ) : (
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 flex items-center justify-center pb-10 text-7xl font-extrabold text-white/15 transition duration-500 ease-out group-hover:scale-110"
+                  >
+                    {cat.name.charAt(0)}
+                  </span>
+                )}
 
                 <div
                   aria-hidden
@@ -71,9 +97,11 @@ export function SportWorlds({ counts }: { counts: Record<string, number> }) {
                     <p className="truncate text-base font-extrabold leading-tight text-white md:text-lg">
                       {cat.name}
                     </p>
-                    <p className="mt-0.5 text-[0.68rem] font-medium text-white/60 md:text-xs">
-                      {formatCount(counts[cat.slug] ?? 0)}
-                    </p>
+                    {counts && (
+                      <p className="mt-0.5 text-xs font-medium text-white/70">
+                        {formatCount(counts[cat.slug] ?? 0)}
+                      </p>
+                    )}
                   </div>
                   <span
                     aria-hidden
@@ -101,6 +129,8 @@ export function SportWorlds({ counts }: { counts: Record<string, number> }) {
   );
 }
 
+// Una cancha sin productos todavía no dice "0 productos": invita a consultar.
 function formatCount(n: number) {
+  if (n === 0) return 'Pronto';
   return n === 1 ? '1 producto' : `${n} productos`;
 }

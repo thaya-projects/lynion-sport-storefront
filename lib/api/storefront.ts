@@ -10,17 +10,46 @@ export type ApiProduct = {
   // Solo tiene valor si el descuento está vigente ahora; el backend ya
   // resuelve las fechas.
   discountPrice: number | null;
+  // Imagen principal. imageUrls trae la galería completa (principal primero,
+  // luego por SortOrder); es opcional porque un backend sin actualizar no la
+  // devuelve.
   imageUrl: string | null;
+  imageUrls?: string[];
   categoryName: string | null;
+  // Opcionales: un backend sin actualizar no los devuelve y la UI los omite.
+  code?: string;
+  description?: string | null;
+  // JSON libre del formulario de producto de Thaya, ya aplanado a texto.
+  attributes?: Record<string, string>;
+  // null si el producto no controla stock.
+  stock?: number | null;
+  // Fin del descuento vigente (ISO); null si no tiene fecha de fin.
+  discountEndsAt?: string | null;
+  isFeatured?: boolean;
+  createdAt?: string;
+  updatedAt?: string | null;
 };
 
 export type ApiCategory = {
   id: string;
   name: string;
+  // Foto subida en Thaya para la categoría; null si no tiene.
+  imageUrl?: string | null;
+  // null en las categorías principales.
+  parentId?: string | null;
 };
 
 export type ApiStorefront = {
-  company: { id: string; name: string; logoUrl: string | null; industry: string | null };
+  company: {
+    id: string;
+    name: string;
+    logoUrl: string | null;
+    industry: string | null;
+    phone?: string | null;
+    email?: string | null;
+    city?: string | null;
+    address?: string | null;
+  };
   stats: { categoryCount: number; productCount: number };
   featuredProduct: ApiProduct | null;
   topProducts: ApiProduct[];
@@ -35,9 +64,11 @@ type ApiCatalogPage = {
   totalPages: number;
 };
 
-// Los datos se cachean 5 minutos: un cambio en el sistema tarda hasta eso en
-// verse en el sitio.
-const REVALIDATE_SECONDS = 300;
+// En producción los datos se cachean 5 minutos como respaldo: lo normal es que
+// Thaya avise de cada cambio a /api/revalidate y se vea al instante. En
+// desarrollo no se cachea nada, así cualquier cambio (incluso por SQL) se ve
+// al recargar.
+const REVALIDATE_SECONDS = process.env.NODE_ENV === 'development' ? 0 : 300;
 const PAGE_SIZE = 100;
 const MAX_PAGES = 20;
 

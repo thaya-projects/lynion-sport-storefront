@@ -5,23 +5,33 @@ import { ProductCard } from '@/components/product-card';
 import { SectionHeader } from '@/components/section-header';
 import type { CatalogProduct } from '@/lib/catalog-types';
 
-export function FeaturedProducts({ items }: { items: CatalogProduct[] }) {
+type Props = {
+  items: CatalogProduct[];
+  // Por defecto, "Los más vendidos"; la portada reusa la fila para las ofertas.
+  id?: string;
+  title?: string;
+  linkHref?: string;
+  linkLabel?: string;
+};
+
+export function FeaturedProducts({
+  items,
+  id = 'mas-vendidos',
+  title = 'Los más vendidos.',
+  linkHref = '/productos',
+  linkLabel = 'Ver catálogo',
+}: Props) {
   if (items.length === 0) return null;
 
   return (
-    <section aria-labelledby="featured-title" className="mt-14">
-      <SectionHeader
-        id="featured-title"
-        title="Los que más salen."
-        linkHref="/productos"
-        linkLabel="Ver catálogo"
-      />
+    <section id={id} aria-labelledby={`${id}-title`} className="mt-14">
+      <SectionHeader id={`${id}-title`} title={title} linkHref={linkHref} linkLabel={linkLabel} />
 
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ y: 12 }}
+        whileInView={{ y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4"
       >
         {items.map((p) => (

@@ -4,16 +4,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { WhatsAppCTA } from '@/components/whatsapp-cta';
+import { ArrowDown } from 'lucide-react';
 import { buildGeneralInquiryUrl } from '@/lib/whatsapp';
+import { WHATSAPP_NUMBER } from '@/lib/site';
 
-export function HeroBanner() {
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '';
-  const waUrl = buildGeneralInquiryUrl(wa);
+// hasFeatured: si la API no devolvió destacados, el botón principal va al
+// catálogo en vez de a una sección que no está en la página.
+export function HeroBanner({ hasFeatured = true }: { hasFeatured?: boolean }) {
+  const waUrl = buildGeneralInquiryUrl(WHATSAPP_NUMBER);
 
   return (
     <section className="relative overflow-hidden rounded-3xl border border-white/5 bg-ink-soft">
-      <div aria-hidden className="absolute -left-40 top-1/3 h-[500px] w-[500px] rounded-full bg-lynion-500/15 blur-3xl" />
-      <div aria-hidden className="absolute -right-24 top-0 h-[520px] w-[520px] rounded-full bg-lynion-700/20 blur-3xl" />
+      <div aria-hidden className="absolute -left-40 top-1/3 h-[500px] w-[500px] rounded-full bg-lynion-500/10 blur-3xl" />
 
       <div className="relative grid gap-6 md:grid-cols-2 md:gap-0">
         <motion.div
@@ -22,27 +24,28 @@ export function HeroBanner() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="relative z-10 flex flex-col justify-center px-6 py-12 md:px-14 md:py-14 lg:py-16"
         >
-          <h1 className="font-display text-4xl font-black leading-[1] tracking-tight text-white sm:text-5xl md:text-[3.25rem] lg:text-[3.75rem]">
-            Todo lo que necesitás,
+          <h1 className="font-display text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-5xl md:text-[3.25rem] lg:text-[3.75rem]">
+            Pelotas originales,
             <br />
-            <span className="gradient-text">en un solo lugar.</span>
+            <span className="text-primary">listas para la cancha.</span>
           </h1>
 
-          <p className="mt-5 max-w-md text-sm text-white/65 md:text-base">
-            Pelotas, indumentaria y accesorios de las mejores marcas.
-            Comprá directo por WhatsApp.
+          <p className="mt-5 max-w-md text-base text-white/75">
+            Fútbol, futsal, vóley y básquet de Molten, Mikasa, Spalding, Adidas, Nike y Wilson.
+            Eliges aquí, confirmas por WhatsApp y te lo enviamos a todo Bolivia.
           </p>
 
           <div className="mt-7 flex flex-wrap gap-3">
-            <WhatsAppCTA href={waUrl} showArrow>
-              Comprar por WhatsApp
-            </WhatsAppCTA>
             <Link
-              href="/productos"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white/85 transition hover:border-white/35 hover:text-white"
+              href={hasFeatured ? '#mas-vendidos' : '/productos'}
+              className="inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-ink transition hover:bg-primary-hi"
             >
-              Ver catálogo
+              {hasFeatured ? 'Ver los más vendidos' : 'Ver catálogo'}
+              {hasFeatured && <ArrowDown className="h-4 w-4" aria-hidden />}
             </Link>
+            <WhatsAppCTA href={waUrl} variant="outline">
+              ¿Dudas? Escríbenos
+            </WhatsAppCTA>
           </div>
         </motion.div>
 
@@ -76,7 +79,7 @@ export function HeroBanner() {
 
           <div className="pointer-events-none absolute bottom-6 right-6 z-10 text-right md:bottom-10 md:right-10">
             <p className="font-script text-4xl leading-none text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] md:text-5xl">
-              Jugá
+              Juega
               <br />
               sin límites.
             </p>

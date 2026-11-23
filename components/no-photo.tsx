@@ -6,12 +6,12 @@ export function NoPhoto({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'absolute inset-0 flex flex-col items-center justify-center gap-2 text-white/30',
+        'absolute inset-0 flex flex-col items-center justify-center gap-2 text-white/50',
         className,
       )}
     >
       <ImageOff className="h-8 w-8" aria-hidden />
-      <span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em]">Sin foto</span>
+      <span className="text-xs font-semibold uppercase tracking-[0.16em]">Sin foto</span>
     </div>
   );
 }
