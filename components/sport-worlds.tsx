@@ -13,19 +13,19 @@ const DEFAULT_TINT = 'radial-gradient(circle at 50% 55%, rgba(16,165,245,0.18), 
 
 const worldMeta: Record<string, WorldMeta> = {
   futbol: {
-    image: '/products/soccer.png',
+    image: '/products/soccer.webp',
     tint: 'radial-gradient(circle at 50% 55%, rgba(34,197,94,0.22), transparent 65%)',
   },
   futsal: {
-    image: '/products/futsal.png',
+    image: '/products/futsal.webp',
     tint: 'radial-gradient(circle at 50% 55%, rgba(16,165,245,0.22), transparent 65%)',
   },
   voley: {
-    image: '/products/volleyball.png',
+    image: '/products/volleyball.webp',
     tint: 'radial-gradient(circle at 50% 55%, rgba(234,179,8,0.20), transparent 65%)',
   },
   basquet: {
-    image: '/products/basketball.png',
+    image: '/products/basketball.webp',
     tint: 'radial-gradient(circle at 50% 55%, rgba(249,115,22,0.22), transparent 65%)',
   },
 };
