@@ -56,7 +56,7 @@ export function HeroBanner({ hasFeatured = true }: { hasFeatured?: boolean }) {
           className="relative min-h-[340px] md:min-h-[480px]"
         >
           <Image
-            src="/hero/athlete.png"
+            src="/hero/athlete.webp"
             alt="Jugadora de vóley Lynion Sport"
             fill
             priority
