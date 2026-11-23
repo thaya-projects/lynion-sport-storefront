@@ -50,8 +50,11 @@ const siteJsonLd = [
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${SITE_URL}/#website`,
+    // Google usa este nombre (no el dominio thaya.app) como nombre del sitio
+    // en los resultados. La url tiene que ser la de la home, con barra final.
     name: SITE_NAME,
-    url: SITE_URL,
+    alternateName: ['Lynion Sport Bolivia', 'Lynion'],
+    url: `${SITE_URL}/`,
     inLanguage: 'es-BO',
     publisher: { '@id': `${SITE_URL}/#organization` },
   },
